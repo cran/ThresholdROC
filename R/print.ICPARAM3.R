@@ -1,0 +1,20 @@
+print.ICPARAM3 <-
+function(x,...)
+{
+cat("Results")
+cat("\nCI for ")
+cat("\nThreshold 1 ")
+cat("\n  Lower Limit: ", x$LOW1)
+cat("\n  Upper Limit: ", x$UP1)
+cat("\n\nThreshold 2")
+cat("\n  Lower Limit: ", x$LOW2)
+cat("\n  Upper Limit: ", x$UP2)
+cat("\n")
+cat("\nParameters used")
+cat("\n  Prevalences:", x$PREV)
+cat("\n  Costs")
+cat("\n    C11,C21,C31:", x$COSTS[1:3])
+cat("\n    C12,C22,C32:", x$COSTS[4:6])
+cat("\n    C13,C23,C33:", x$COSTS[7:9])
+cat("\n")
+}
