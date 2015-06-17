@@ -1,28 +1,37 @@
-\name{ThresholdROC-package}
-\alias{ThresholdROC-package}
+\name{ThresholdROC}
+\alias{ThresholdROC}
 \alias{ThresholdROC}
 \docType{package}
-\title{ Estimates the optimum threshold and its variance in diagnostic settings }
-\description{ Estimates the optimum threshold and its variance in two and three state settings based on minimizing a cost function}
+\title{
+Optimum threshold estimation based on cost function in a two- and three- state settings
+}
+\description{
+The ThresholdROC package provides point and interval estimations of the optimum threshold for continuous diagnostic tests (two- and three- state settings). The point estimation
+is based on the definition of a cost function which we opt to minimise. An analytical estimator exists for the binormal and trinormal model and the empirical one is used for all settings. The interval estimation is based on the Delta method variance estimator in a binormal parametric setting and on methods on non-linear equations for the trinormal setting. Bootstrap methods are also provided for the confidence intervals.
+}
 \details{
 \tabular{ll}{
 Package: \tab ThresholdROC\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2011-12-07\cr
-License: \tab GPL>=2\cr
-LazyLoad: \tab yes\cr
+Version: \tab 2.0\cr
+Date: \tab 2015-06-16\cr
+License: \tab GPL (>= 2)\cr
 }
+The most important functions are \code{thres2} and \code{thres3}. They offer a wide range of options for threshold estimation and inference in two and three state settings. We also include the function \code{diag}, which perfoms diagnostic tests in 2x2 tables.
 }
-\author{ Konstantina Skaltsa
+\author{
+Sara Perez-Jaume, Natalia Pallares, Konstantina Skaltsa
 
-Maintainer: Konstantina Skaltsa <kskaltsa@ub.edu> }
+Maintainer: Sara Perez-Jaume <spjaume@gmail.com>
+}
 \references{
-Skaltsa K et al. (2010) Estimation of the diagnostic threshold accounting for decision costs and sampling uncertainty. Biometrical Journal 52(5), 676-697.
+Efron B, Tibshirani RJ. (1993). An introduction to the bootstrap, Chapman & Hall.
 
-Skaltsa K et al. (2011) Optimum threshold estimation based on cost function in a multistate diagnostic setting. Statistics in Medicine. In press.}
+Skaltsa K, Jover L, Carrasco JL. (2010). Estimation of the diagnostic threshold accounting for decision costs and sampling uncertainty. Biometrical Journal 52(5):676-697.
+
+Skaltsa K, Jover L, Fuster D, Carrasco JL. (2012). Optimum threshold estimation based on cost function in a multistate diagnostic setting. Statistics in Medicine, 31:1098-1109.
+
+Zhou XH, Obuchowski NA and McClish DK. (2002). Statistical methods in diagnostic medicine. John Wiley and sons.
+}
+
 \keyword{ package }
-\seealso{
-}
-\examples{
-}
