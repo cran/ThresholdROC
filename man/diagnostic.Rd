@@ -20,7 +20,7 @@ an object of class \code{table} or \code{matrix} in the following form:
    
     FN  TN
    
-where TP=number of true positives, FP=number of false positives, FN=number of false negatives and TN=number of true negatives; that is, a table where the first row corresponds to the true tests and the second row to the false tests; the first column corresponds to the diseased subjects and the second one to the healthy individuals. \code{dim} should be \code{c(2, 2)}.
+where TP=number of true positives, FP=number of false positives, FN=number of false negatives and TN=number of true negatives; that is, a table where the first row corresponds to the true tests and the second row to the false tests; the first column corresponds to the diseased subjects and the second one to the healthy individuals. \code{dim(tab)} should be \code{c(2, 2)}.
 }
   \item{method}{
 method for computing the confidence intervals for sensitivity, specificity, predictive values, accuracy and error rate. The user can choose between \code{"par"} (parametric) and \code{"exact"} (exact). The last one is recommended for small sample sizes. Default, \code{"par"}. The user can specify just the initial letters. See \bold{Details}.
@@ -29,7 +29,7 @@ method for computing the confidence intervals for sensitivity, specificity, pred
 were data collected in a case-control study? Default, \code{FALSE}.
 }
   \item{p}{
-disease prevalence (only when \code{casecontrol=T}).
+disease prevalence (only when \code{casecontrol=T}; otherwise, this parameter is ignored).
 }
   \item{conf.level}{
 confidence level for the confidence intervals. Default, 95\%.

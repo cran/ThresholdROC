@@ -5,6 +5,26 @@ export(thresTH2, thres2, secondDer2, plotCostROC, SS, thresTH3, thres3, secondDe
 importFrom(MASS, fitdistr)
 importFrom(numDeriv, grad)
 importFrom(pROC, roc)
+importFrom(graphics, abline)
+importFrom(stats, binom.test)
+importFrom(stats, density)
+importFrom(stats, deriv)
+importFrom(graphics, lines)
+importFrom(stats, median)
+importFrom(stats, na.omit)
+importFrom(stats, nlm)
+importFrom(graphics, par)
+importFrom(graphics, plot)
+importFrom(stats, pnorm)
+importFrom(graphics, points)
+importFrom(stats, prop.test)
+importFrom(stats, qnorm)
+importFrom(stats, quantile)
+importFrom(stats, sd)
+importFrom(stats, uniroot)
+importFrom(stats, var)
+
+
 
 # S3 methods
 S3method(print, "thresTH2")

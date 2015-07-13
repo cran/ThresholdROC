@@ -45,7 +45,7 @@ second parameter of the third distribution.
 3-dimensional vector of prevalences.
 }
   \item{costs}{
-cost matrix. Costs should be entered as a 3x3 matrix, where the first row corresponds to the costs associated with the classification of subjects in state 1 (C11, C12 and C13), second row corresponds to the costs associated with the classification of subjects in state 2 (C21, C22 and C23) and the third row corresponds to the costs associated with classification of subjects in state 3 (C31, C32, C33). Default cost values are a combination of costs that leads to the same thresholds as the Youden index method.
+cost matrix. Costs should be entered as a 3x3 matrix, where the first row corresponds to the costs associated with the classification of subjects in state 1 (C11, C12 and C13), second row corresponds to the costs associated with the classification of subjects in state 2 (C21, C22 and C23) and the third row corresponds to the costs associated with classification of subjects in state 3 (C31, C32, C33), where Cij is the cost of classifying an individual of class i as class j. Default cost values are a combination of costs that leads to the same thresholds as the Youden index method (see \bold{References} for details).
 }
   \item{q1}{
 probability of the distribution taking lower values in order to determine a low quantile. Default, 0.05. See \bold{Details}.

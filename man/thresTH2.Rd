@@ -35,7 +35,7 @@ second parameter of the distribution chosen for the diseased population.
 disease prevalence.
 }
   \item{costs}{
-cost matrix. Costs should be entered as a 2x2 matrix, where the first row corresponds to the true positive and true negative costs and the second row to the false positive and false negative costs. Default cost values are a combination of costs that yields R=1, which would be the equivalent to the Youden index method.
+cost matrix. Costs should be entered as a 2x2 matrix, where the first row corresponds to the true positive and true negative costs and the second row to the false positive and false negative costs. Default cost values are a combination of costs that yields R=1, which would be the equivalent to the Youden index method (for details about this concept, see \bold{References}).
 }
   \item{q1}{
 probability of the left distribution in order to determine a low quantile. Default, 0.05.

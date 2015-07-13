@@ -100,7 +100,7 @@ diagnostic <- function(tab, method=c("par", "exact"), casecontrol=FALSE, p=NULL,
   #  p: disease prevalence (only when casecontrol=T).
   #  conf.level: level confidence for the CIs. Default, 95%.
   
-  # control d'entrada
+  # entry control
   method <- match.arg(method)
   if (!is.table(tab) & !is.matrix(tab)){
     stop("'tab' must be a table or a matrix")

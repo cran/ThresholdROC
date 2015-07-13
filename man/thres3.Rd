@@ -29,16 +29,16 @@ vector containing the third sample values.
 3-dimensional vector of prevalences.
 }
   \item{costs}{
-cost matrix. Costs should be entered as a 3x3 matrix, where the first row corresponds to the costs associated with the classification of subjects in state 1 (C11, C12 and C13), second row corresponds to the costs associated with the classification of subjects in state 2 (C21, C22 and C23) and the third row corresponds to the costs associated with classification of subjects in state 3 (C31, C32, C33). Default cost values are a combination of costs that leads to the same thresholds as the Youden index method.
+cost matrix. Costs should be entered as a 3x3 matrix, where the first row corresponds to the costs associated with the classification of subjects in state 1 (C11, C12 and C13), second row corresponds to the costs associated with the classification of subjects in state 2 (C21, C22 and C23) and the third row corresponds to the costs associated with classification of subjects in state 3 (C31, C32, C33), where Cij is the cost of classifying an individual of class i as class j. Default cost values are a combination of costs that leads to the same thresholds as the Youden index method (see \bold{References} for details).
 }
   \item{dist1}{
-distribution to be assumed for the first population. See \bold{Details}.
+distribution to be assumed for the first population. Default, \code{"norm"}. See \bold{Details}.
 }
   \item{dist2}{
-distribution to be assumed for the second population. See \bold{Details}.
+distribution to be assumed for the second population. Default, \code{"norm"}. See \bold{Details}.
 }
   \item{dist3}{
-distribution to be assumed for the third population. See \bold{Details}.
+distribution to be assumed for the third population. Default, \code{"norm"}. See \bold{Details}.
 }
   \item{start}{
 when the three distributions \code{dist1}, \code{dist2} and \code{dist3} are \code{"norm"}, a 2-dimensional vector containing starting values for the thresholds. The authors recommend to use the mean of the distribution with lower values and the mean of the distribution with higher values. If any distribution is not \code{"norm"}, this parameter is ignored. See \bold{Details}. 

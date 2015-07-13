@@ -26,10 +26,10 @@ vector containing the diseased sample values.
 disease prevalence.
 }
   \item{costs}{
-cost matrix. Costs should be entered as a 2x2 matrix, where the first row corresponds to the true positive and true negative costs and the second row to the false positive and false negative costs. Default cost values are a combination of costs that yields R=1, which would be the equivalent to the Youden index method.
+cost matrix. Costs should be entered as a 2x2 matrix, where the first row corresponds to the true positive and true negative costs and the second row to the false positive and false negative costs. Default cost values are a combination of costs that yields R=1, which would be the equivalent to the Youden index method (for details about this concept, see \bold{References}).
 }
   \item{method}{
-method used in the estimation. The user can specify just the initial letters. See \bold{Details}.
+method used in the estimation. The user can specify just the initial letters. Default, \code{"equal"}. See \bold{Details} for more information about the methods available.
 }
   \item{dist1}{
 distribution to be assumed for the healthy population. See \bold{Details}.
@@ -40,7 +40,7 @@ distribution to be assumed for the diseased population. See \bold{Details}.
 
 }
   \item{ci.method}{
-method to be used for the confidence intervals computation. The user can specify just the initial letters. Default, \code{"delta"}. See \bold{Details}.
+method to be used for the confidence intervals computation. The user can specify just the initial letters. Default, \code{"delta"}. See \bold{Details} for more information about the methods available.
 }
   \item{B}{
 number of bootstrap resamples when \code{ci.method="boot"}. Otherwise, ignored. Default, 1000.
@@ -49,7 +49,7 @@ number of bootstrap resamples when \code{ci.method="boot"}. Otherwise, ignored. 
 significance level for the confidence interval. Default, 0.05.
 }
   \item{extra.info}{
-when using \code{method="empirical"}, if set to \code{TRUE} it returns extra information about the computation of the threshold. Ignored when \code{method} is not \code{"empirical"}.
+when using \code{method="empirical"}, if set to \code{TRUE} the function returns extra information about the computation of the threshold. Ignored when \code{method} is not \code{"empirical"}. Default, \code{FALSE}.
 }
   \item{na.rm}{
 a logical value indicating whether \code{NA} values in \code{k1} and \code{k2} should be stripped before the computation proceeds. Default, \code{FALSE}.

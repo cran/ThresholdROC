@@ -24,7 +24,7 @@ an object of class \code{thres2}.
 vector containing the bandwith for the non-diseased sample in the first position and the bandwith for the diseased sample in the second position (to be passed to \code{density()}). Default, \code{c("nrd0", "nrd0")}.
 }
   \item{ci}{
-should the confidence interval be plotted? Default, \code{T}.
+should the confidence interval be plotted? Default, \code{TRUE}.
 }
   \item{which.boot}{
 in case \code{x} contains confidence intervals computed by bootstrapping, which one should be printed? The user can choose between \code{"norm"} (based on normal distribution) or \code{"perc"} (based on percentiles). Default, \code{"norm"}. This argument is ignored if the confidence intervals were computed by the delta method.

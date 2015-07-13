@@ -13,8 +13,8 @@ is based on the definition of a cost function which we opt to minimise. An analy
 \tabular{ll}{
 Package: \tab ThresholdROC\cr
 Type: \tab Package\cr
-Version: \tab 2.0\cr
-Date: \tab 2015-06-16\cr
+Version: \tab 2.1\cr
+Date: \tab 2015-07-12\cr
 License: \tab GPL (>= 2)\cr
 }
 The most important functions are \code{thres2} and \code{thres3}. They offer a wide range of options for threshold estimation and inference in two and three state settings. We also include the function \code{diag}, which perfoms diagnostic tests in 2x2 tables.
