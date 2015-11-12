@@ -44,14 +44,14 @@ Confidence intervals for the likelihood ratios are computed using the formulas p
 
 Confidence intervals for the odds ratio are computed using the formulas proposed in Zhou et al (2002), Section 4.1.4. The same correction described before is applied when  the odds ratio can not be computed due to division by 0.
 
-Confidence intervals for the Youden's index are computed using the expression
+Confidence intervals for the Youden index are computed using the expression
 
 \deqn{CI(1-\alpha) = (Y-z_{1-\alpha/2}*Var(Y), Y+z_{1-\alpha/2}*Var(Y)),}
 
-where \eqn{Y} is the Youden's index estimate, \eqn{z_{1-\alpha/2}} is the \eqn{1-\alpha/2} quantile of a \eqn{N(0, 1)} distribution and \eqn{Var(Y)} is the variance of the Youden's index estimator, which is computed as \eqn{Var(Sensitivity)+Var(Specificity)}.
+where \eqn{Y} is the Youden index estimate, \eqn{z_{1-\alpha/2}} is the \eqn{1-\alpha/2} quantile of a \eqn{N(0, 1)} distribution and \eqn{Var(Y)} is the variance of the Youden index estimator, which is computed as \eqn{Var(Sensitivity)+Var(Specificity)}.
 }
 \value{
-A \code{data.frame} with ten rows and three columns containing the point estimate and confidence intervals for the following statistical measures: sensitivity, specificity, positive predictive value, negative predictive value, positive likelihood ratio, negative likelihood ratio, odds ratio, Youden's index, accuracy and error rate. 
+A \code{data.frame} with ten rows and three columns containing the point estimate and confidence intervals for the following statistical measures: sensitivity, specificity, positive predictive value, negative predictive value, positive likelihood ratio, negative likelihood ratio, odds ratio, Youden index, accuracy and error rate. 
 }
 \references{
 Zhou XH, Obuchowski NA and McClish DK. (2002). Statistical methods in diagnostic medicine. John Wiley and sons.

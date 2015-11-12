@@ -68,7 +68,7 @@ thres1 <- thres3(k1, k2, k3, rho, dist1="norm", dist2="norm",
                  dist3="norm", start=start, ci.method="param") 
 
 # not assuming trinormality
-start2 <- c(0.05,0.6,0.5,0.95)
+start2 <- c(0.05, 0.6, 0.5, 0.95)
 set.seed(2014)
 thres2 <- thres3(k1, k2, k3, rho, start=start2, B=1000,
                 ci.method="boot", dist1="lnorm", dist2="norm",

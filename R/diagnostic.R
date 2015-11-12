@@ -1,4 +1,4 @@
-# auxiliar function: estimation + CIs for PPV and NPV when casecontrol
+# auxiliar function: estimate + CI for PPV and NPV when casecontrol=TRUE
 mercaldo <- function(tab, p, which, conf.level=0.95){
   TP <- tab[1,1]
   FP <- tab[1,2]
@@ -17,8 +17,8 @@ mercaldo <- function(tab, p, which, conf.level=0.95){
     # CI for PPV
     logit.PPV <- log(p*Se/((1-Sp)*(1-p)))
     var.logit.PPV <- ((1-Se)/Se)*(1/(TP+FN))+(Sp/(1-Sp))*(1/(FP+TN))
-    PPV.ll <- (exp(logit.PPV-z*sqrt(var.logit.PPV)))/(1+exp(logit.PPV-z*sqrt(var.logit.PPV)))
-    PPV.ul <- (exp(logit.PPV+z*sqrt(var.logit.PPV)))/(1+exp(logit.PPV+z*sqrt(var.logit.PPV)))
+    PPV.ll <- (exp(logit.PPV - z*sqrt(var.logit.PPV)))/(1 + exp(logit.PPV - z*sqrt(var.logit.PPV)))
+    PPV.ul <- (exp(logit.PPV + z*sqrt(var.logit.PPV)))/(1 + exp(logit.PPV + z*sqrt(var.logit.PPV)))
     PPV.ic <- c(PPV, PPV.ll, PPV.ul)
     return(PPV.ic)
   }else if (which=="NPV"){
@@ -27,8 +27,8 @@ mercaldo <- function(tab, p, which, conf.level=0.95){
     # CI for NPV
     logit.NPV <- log((1-p)*Sp/((1-Se)*p))
     var.logit.NPV <- (Se/(1-Se))*(1/(TP+FN))+((1-Sp)/Sp)*(1/(FP+TN))
-    NPV.ll <- (exp(logit.NPV-z*sqrt(var.logit.NPV)))/(1+exp(logit.NPV-z*sqrt(var.logit.NPV)))
-    NPV.ul <- (exp(logit.NPV+z*sqrt(var.logit.NPV)))/(1+exp(logit.NPV+z*sqrt(var.logit.NPV)))
+    NPV.ll <- (exp(logit.NPV - z*sqrt(var.logit.NPV)))/(1 + exp(logit.NPV - z*sqrt(var.logit.NPV)))
+    NPV.ul <- (exp(logit.NPV + z*sqrt(var.logit.NPV)))/(1 + exp(logit.NPV + z*sqrt(var.logit.NPV)))
     NPV.ic <- c(NPV, NPV.ll, NPV.ul)
     return(NPV.ic)
   }else{
@@ -36,7 +36,7 @@ mercaldo <- function(tab, p, which, conf.level=0.95){
   }  
 }
 
-# auxiliar function: estimation + CIs for OR
+# auxiliar function: estimate + CI for OR
 OR <- function(tab, conf.level=0.95){
   TP <- tab[1,1]
   FP <- tab[1,2]
@@ -55,7 +55,7 @@ OR <- function(tab, conf.level=0.95){
   return(OR.ic)
 }
 
-# auxiliar function: estimation + CIs for LR+ and LR-
+# auxiliar function: estimate + CI for LR+ and LR-
 LR <- function(tab, which, conf.level=0.95){
   TP <- tab[1,1]
   FP <- tab[1,2]
@@ -113,24 +113,24 @@ diagnostic <- function(tab, method=c("par", "exact"), casecontrol=FALSE, p=NULL,
     stop("'tab' must be a 2x2 table or a matrix")
   }
   
-  # valors
+  # values in tab
   TP <- tab[1,1]
   FP <- tab[1,2]
   FN <- tab[2,1]
   TN <- tab[2,2]
   
-  # Sensitivity
+  # Sensitivity (Se)
   Se <- TP/(TP + FN)
-  # Specificity
+  # Specificity (Sp)
   Sp <- TN/(FP + TN)
   
   # CI for Se and Sp
   if (method=="par"){
-    Se.ic <- c(Se, prop.test(TP, TP+FN, conf.level=conf.level)$conf.int)
-    Sp.ic <- c(Sp, prop.test(TN, FP+TN, conf.level=conf.level)$conf.int)
+    Se.ic <- c(Se, prop.test(TP, TP + FN, conf.level=conf.level)$conf.int)
+    Sp.ic <- c(Sp, prop.test(TN, FP + TN, conf.level=conf.level)$conf.int)
   }else if (method=="exact"){
-    Se.ic <- c(Se, binom.test(TP, TP+FN, conf.level=conf.level)$conf.int)
-    Sp.ic <- c(Sp, binom.test(TN, FP+TN, conf.level=conf.level)$conf.int)
+    Se.ic <- c(Se, binom.test(TP, TP + FN, conf.level=conf.level)$conf.int)
+    Sp.ic <- c(Sp, binom.test(TN, FP + TN, conf.level=conf.level)$conf.int)
   }
   
   # PPV and NPV
@@ -141,11 +141,11 @@ diagnostic <- function(tab, method=c("par", "exact"), casecontrol=FALSE, p=NULL,
     NPV <- TN/(TN + FN)
     # CI for PPV and NPV
     if (method=="par"){
-      PPV.ic <- c(PPV, prop.test(TP, TP+FP, conf.level=conf.level)$conf.int)
-      NPV.ic <- c(NPV, prop.test(TN, TN+FN, conf.level=conf.level)$conf.int)
+      PPV.ic <- c(PPV, prop.test(TP, TP + FP, conf.level=conf.level)$conf.int)
+      NPV.ic <- c(NPV, prop.test(TN, TN + FN, conf.level=conf.level)$conf.int)
     }else if (method=="exact"){
-      PPV.ic <- c(PPV, binom.test(TP, TP+FP, conf.level=conf.level)$conf.int)
-      NPV.ic <- c(NPV, binom.test(TN, TN+FN, conf.level=conf.level)$conf.int)
+      PPV.ic <- c(PPV, binom.test(TP, TP + FP, conf.level=conf.level)$conf.int)
+      NPV.ic <- c(NPV, binom.test(TN, TN + FN, conf.level=conf.level)$conf.int)
     }
   }else{
     if (is.null(p)){
@@ -157,10 +157,10 @@ diagnostic <- function(tab, method=c("par", "exact"), casecontrol=FALSE, p=NULL,
       NPV.ic <- mercaldo(tab, p, "NPV", conf.level)
       # applying continuity correction when PPV or NPV are estimated as 1 
       if (PPV.ic[1]==1){
-        PPV.ic <- mercaldo(tab+0.5, p, "PPV", conf.level)
+        PPV.ic <- mercaldo(tab + 0.5, p, "PPV", conf.level)
       }
       if (NPV.ic[1]==1){
-        NPV.ic <- mercaldo(tab+0.5, p, "NPV", conf.level)
+        NPV.ic <- mercaldo(tab + 0.5, p, "NPV", conf.level)
       }
     }
   }
@@ -189,11 +189,11 @@ diagnostic <- function(tab, method=c("par", "exact"), casecontrol=FALSE, p=NULL,
     OR.ic <- OR(tab, conf.level)
   }
   
-  # Youden's index
-  YI <- Se+Sp-1 
-  var.YI <- Se*(1-Se)/(TP+FN)+Sp*(1-Sp)/(FP+TN)
+  # Youden index
+  YI <- Se + Sp - 1 
+  var.YI <- Se*(1-Se)/(TP+FN) + Sp*(1-Sp)/(FP+TN)
   z <- qnorm(1-(1-conf.level)/2)
-  YI.ic <- c(YI, YI-z*sqrt(var.YI), YI+z*sqrt(var.YI))
+  YI.ic <- c(YI, YI - z*sqrt(var.YI), YI + z*sqrt(var.YI))
   
   # Accuracy (probability of a correct test result)
   Acc <- (TP+TN)/(TP+FP+FN+TN)
@@ -213,14 +213,14 @@ diagnostic <- function(tab, method=c("par", "exact"), casecontrol=FALSE, p=NULL,
     ER.ic <- c(ER, binom.test(FP+FN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
   }
   
-  # results
+  # table of results
   res <- rbind(Se.ic, Sp.ic, PPV.ic, NPV.ic, LRP.ic, LRN.ic, OR.ic, YI.ic, Acc.ic,
                ER.ic)
   
   colnames(res) <- c("Estim.", paste("Low.lim(", conf.level*100, "%)", sep=""),
                      paste("Up.lim(", conf.level*100, "%)", sep=""))
   rownames(res) <- c("Sensitivity", "Specificity", "Pos.Pred.Val.", "Neg.Pred.Val.",
-                     "LR+", "LR-", "Odds ratio", "Youden's index", "Accuracy",
+                     "LR+", "LR-", "Odds ratio", "Youden index", "Accuracy",
                      "Error rate")
   return(res)
 }

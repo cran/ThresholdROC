@@ -1,6 +1,9 @@
-##################################################################################################################
-##################################################################################################################
+
+##########################################################################
 ###########  3 STATES
+##########################################################################
+
+
 ##########################################################################
 ###########  Tak K Mak
 ##########################################################################
@@ -82,12 +85,12 @@ secondDer3 <- function(x){
       pars <- pars[ord_m,]
       rho <- rho[ord_m]
       costs <- costs[ord_m,ord_m]
-      par1.1 <- pars[1,1]
-      par1.2 <- pars[1,2]
-      par2.1 <- pars[2,1]
-      par2.2 <- pars[2,2]
-      par3.1 <- pars[3,1]
-      par3.2 <- pars[3,2]
+      par1.1 <- pars[1, 1]
+      par1.2 <- pars[1, 2]
+      par2.1 <- pars[2, 1]
+      par2.2 <- pars[2, 2]
+      par3.1 <- pars[3, 1]
+      par3.2 <- pars[3, 2]
       dist <- c(dist1, dist2, dist3)[ord_m]
       dist1 <- dist[1]
       dist2 <- dist[2]
@@ -97,15 +100,15 @@ secondDer3 <- function(x){
     rho1 <- rho[1]
     rho2 <- rho[2]
     rho3 <- rho[3]
-    c11 <- costs[1,1]
-    c12 <- costs[1,2]
-    c13 <- costs[1,3]
-    c21 <- costs[2,1]
-    c22 <- costs[2,2]
-    c23 <- costs[2,3]
-    c31 <- costs[3,1]
-    c32 <- costs[3,2]
-    c33 <- costs[3,3] 
+    c11 <- costs[1, 1]
+    c12 <- costs[1, 2]
+    c13 <- costs[1, 3]
+    c21 <- costs[2, 1]
+    c22 <- costs[2, 2]
+    c23 <- costs[2, 3]
+    c31 <- costs[3, 1]
+    c32 <- costs[3, 2]
+    c33 <- costs[3, 3] 
     eq1 <- function(y){
       ret <- (rho1*(c11-c12)*dens(dist1)(y,par1.1,par1.2)+rho2*(c21-c22)*dens(dist2)(y,par2.1,par2.2)+rho3*(c31-c32)*dens(dist3)(y,par3.1,par3.2))
       return(ret)
@@ -121,6 +124,7 @@ secondDer3 <- function(x){
   names(der) <- c("Value for thres1", "Value for thres2")
   return(der)
 }
+
 ##########################################################################
 ##### Second derivative of the cost function (3 states): just a check
 ##### arguments:  k1=vector containing the class 1 sample values 
@@ -133,7 +137,7 @@ secondDer3 <- function(x){
 #####             be stripped before the computation proceeds. Default, F.
 ##### value:      the second derivative function
 ##########################################################################
-secondDer3aux <- function(k1,k2,k3,rho,Thr,costs=matrix(c(0,1,1, rho[1]/rho[2],0,rho[3]/rho[2], 1,1,0), 3,3,byrow=TRUE), na.rm=FALSE){
+secondDer3aux <- function(k1, k2, k3, rho, Thr, costs=matrix(c(0, 1, 1, rho[1]/rho[2], 0, rho[3]/rho[2], 1, 1, 0), 3, 3, byrow=TRUE), na.rm=FALSE){
   # error handling
   if (sum(rho > 0 & rho < 1) != 3){
     stop("The prevalences must be in (0,1)")
@@ -168,15 +172,15 @@ secondDer3aux <- function(k1,k2,k3,rho,Thr,costs=matrix(c(0,1,1, rho[1]/rho[2],0
   rho1 <- rho[1]
   rho2 <- rho[2]
   rho3 <- rho[3]
-  c11 <- costs[1,1]
-  c12 <- costs[1,2]
-  c13 <- costs[1,3]
-  c21 <- costs[2,1]
-  c22 <- costs[2,2]
-  c23 <- costs[2,3]
-  c31 <- costs[3,1]
-  c32 <- costs[3,2]
-  c33 <- costs[3,3]
+  c11 <- costs[1, 1]
+  c12 <- costs[1, 2]
+  c13 <- costs[1, 3]
+  c21 <- costs[2, 1]
+  c22 <- costs[2, 2]
+  c23 <- costs[2, 3]
+  c31 <- costs[3, 1]
+  c32 <- costs[3, 2]
+  c33 <- costs[3, 3]
   
   der1 <- (n1+n2+n3)/sqrt(2*pi)*( rho1*(c12-c11)*((Thr[1]-par1.1)/par1.2^3)*exp(-(Thr[1]-par1.1)^2/(2*par1.2^2))+
                                     rho2*(c22-c21)*((Thr[1]-par2.1)/par2.2^3)*exp(-(Thr[1]-par2.1)^2/(2*par2.2^2))+
@@ -188,42 +192,44 @@ secondDer3aux <- function(k1,k2,k3,rho,Thr,costs=matrix(c(0,1,1, rho[1]/rho[2],0
   names(der) <- c("Value for Thr[1]","Value for Thr[2]")
   return(der)
 }
+
+
 ##########################################################################
 ###########  V=Delta Variances of the derivatives of the cost function sigma^2/2*n
 #####		  	costs=cost matrix
 ##########################################################################
-VDel3 <- function(k1,k2,k3,rho,Thr,costs=matrix(c(0,1,1, rho[1]/rho[2],0,rho[3]/rho[2], 1,1,0), 3,3,byrow=TRUE)){
+VDel3 <- function(k1, k2, k3, rho, Thr, costs=matrix(c(0, 1, 1, rho[1]/rho[2], 0, rho[3]/rho[2], 1, 1, 0), 3, 3, byrow=TRUE)){
   n1 <- length(k1)
   n2 <- length(k2)
   n3 <- length(k3)
-  c11 <- costs[1,1]
-  c12 <- costs[1,2]
-  c13 <- costs[1,3]
-  c21 <- costs[2,1]
-  c22 <- costs[2,2]
-  c23 <- costs[2,3]
-  c31 <- costs[3,1]
-  c32 <- costs[3,2]
-  c33 <- costs[3,3] 
+  c11 <- costs[1, 1]
+  c12 <- costs[1, 2]
+  c13 <- costs[1, 3]
+  c21 <- costs[2, 1]
+  c22 <- costs[2, 2]
+  c23 <- costs[2, 3]
+  c31 <- costs[3, 1]
+  c32 <- costs[3, 2]
+  c33 <- costs[3, 3] 
   rho1 <- rho[1]
   rho2 <- rho[2]
   rho3 <- rho[3]
   ### derivative means T1
-  d111 <- th1st3(k1,rho1,n1,n2,n3,c11,c12,Thr[1])
-  d121 <- th1st3(k2,rho2,n1,n2,n3,c21,c22,Thr[1])
-  d131 <- th1st3(k3,rho3,n1,n2,n3,c31,c32,Thr[1])
+  d111 <- th1st3(k1, rho1, n1, n2, n3, c11, c12, Thr[1])
+  d121 <- th1st3(k2, rho2, n1, n2, n3, c21, c22, Thr[1])
+  d131 <- th1st3(k3, rho3, n1, n2, n3, c31, c32, Thr[1])
   ### derivative standard deviations T1
-  d112 <- th2st3(k1,rho1,n1,n2,n3,c11,c12,Thr[1])
-  d122 <- th2st3(k2,rho2,n1,n2,n3,c21,c22,Thr[1])
-  d132 <- th2st3(k3,rho3,n1,n2,n3,c31,c32,Thr[1])
+  d112 <- th2st3(k1, rho1, n1, n2, n3, c11, c12, Thr[1])
+  d122 <- th2st3(k2, rho2, n1, n2, n3, c21, c22, Thr[1])
+  d132 <- th2st3(k3, rho3, n1, n2, n3, c31, c32, Thr[1])
   ### derivative means T2
-  d211 <- th1st3(k1,rho1,n1,n2,n3,c12,c13,Thr[2])
-  d221 <- th1st3(k2,rho2,n1,n2,n3,c22,c23,Thr[2])
-  d231 <- th1st3(k3,rho3,n1,n2,n3,c32,c33,Thr[2])
+  d211 <- th1st3(k1, rho1, n1, n2, n3, c12, c13, Thr[2])
+  d221 <- th1st3(k2, rho2, n1, n2, n3, c22, c23, Thr[2])
+  d231 <- th1st3(k3, rho3, n1, n2, n3, c32, c33, Thr[2])
   ### derivative standard deviations T2
-  d212 <- th2st3(k1,rho1,n1,n2,n3,c12,c13,Thr[2])
-  d222 <- th2st3(k2,rho2,n1,n2,n3,c22,c23,Thr[2])
-  d232 <- th2st3(k3,rho3,n1,n2,n3,c32,c33,Thr[2])
+  d212 <- th2st3(k1, rho1, n1, n2, n3, c12, c13, Thr[2])
+  d222 <- th2st3(k2, rho2, n1, n2, n3, c22, c23, Thr[2])
+  d232 <- th2st3(k3, rho3, n1, n2, n3, c32, c33, Thr[2])
 
   par1.1 <- mean(k1)
   par2.1 <- mean(k2)
@@ -231,63 +237,59 @@ VDel3 <- function(k1,k2,k3,rho,Thr,costs=matrix(c(0,1,1, rho[1]/rho[2],0,rho[3]/
   par1.2 <- sd(k1)
   par2.2 <- sd(k2)
   par3.2 <- sd(k3)
-  V1 <- d111^2*(par1.2^2/n1)+d121^2*(par2.2^2/n2)+d131^2*(par3.2^2/n3)+d112^2*(par1.2^2/(2*n1))+d122^2*(par2.2^2/(2*n2))+d132^2*(par3.2^2/(2*n3))
-  V2 <- d211^2*(par1.2^2/n1)+d221^2*(par2.2^2/n2)+d231^2*(par3.2^2/n3)+d212^2*(par1.2^2/(2*n1))+d222^2*(par2.2^2/(2*n2))+d232^2*(par3.2^2/(2*n3))
+  V1 <- d111^2*(par1.2^2/n1)+d121^2*(par2.2^2/n2) + d131^2*(par3.2^2/n3) + d112^2*(par1.2^2/(2*n1)) + d122^2*(par2.2^2/(2*n2)) + d132^2*(par3.2^2/(2*n3))
+  V2 <- d211^2*(par1.2^2/n1)+d221^2*(par2.2^2/n2) + d231^2*(par3.2^2/n3) + d212^2*(par1.2^2/(2*n1)) + d222^2*(par2.2^2/(2*n2)) + d232^2*(par3.2^2/(2*n3))
   return(c(V1,V2))
 }
+
 ##########################################################################
 ########### Partial derivative of cost function with respect to mean
-#####		  	costs=cost matrix
-##################################################################################
-th1st3 <- function(k1,rho1,n1,n2,n3,c11,c12,Th){
+##########################################################################
+th1st3 <- function(k1, rho1, n1, n2, n3, c11, c12, Th){
   par1.1 <- mean(k1)
   par1.2 <- sd(k1)
-  der <- (n1+n2+n3)/sqrt(2*pi)*rho1*(c11-c12)*((Th-par1.1)/par1.2^3)*exp(-(Th-par1.1)^2/(2*par1.2^2))
+  der <- (n1 + n2 + n3)/sqrt(2*pi)*rho1*(c11-c12)*((Th-par1.1)/par1.2^3)*exp(-(Th-par1.1)^2/(2*par1.2^2))
   return(der)
 }
 ##########################################################################
 ########### Partial derivative of cost function with respect to standard deviation
-#####		  	costs=cost matrix
-##################################################################################
-th2st3 <- function(k1,rho1,n1,n2,n3,c11,c12,Th){
+##########################################################################
+th2st3 <- function(k1, rho1, n1, n2, n3, c11, c12, Th){
   par1.1 <- mean(k1)
   par1.2 <- sd(k1)
-  der <- -(n1+n2+n3)/(sqrt(2*pi)*par1.2^2)*rho1*(c11-c12)*exp(-(Th-par1.1)^2/(2*par1.2^2))*(-1+((Th-par1.1)^2/par1.2^2))
+  der <- -(n1 + n2 + n3)/(sqrt(2*pi)*par1.2^2)*rho1*(c11-c12)*exp(-(Th-par1.1)^2/(2*par1.2^2))*(-1+((Th-par1.1)^2/par1.2^2))
   return(der)
 }
+
 ##########################################################################
-########### Hopefully estimator's variance
-#####		  	costs=cost matrix
+########### Variance estimator
 ##################################################################################
-VarThr3 <- function(k1,k2,k3,rho,Thr,costs=matrix(c(0,1,1, rho[1]/rho[2],0,rho[3]/rho[2], 1,1,0), 3,3,byrow=TRUE)){
-  c11 <- costs[1,1]
-  c12 <- costs[1,2]
-  c13 <- costs[1,3]
-  c21 <- costs[2,1]
-  c22 <- costs[2,2]
-  c23 <- costs[2,3]
-  c31 <- costs[3,1]
-  c32 <- costs[3,2]
-  c33 <- costs[3,3] 
+VarThr3 <- function(k1, k2, k3, rho, Thr, costs=matrix(c(0, 1, 1, rho[1]/rho[2], 0, rho[3]/rho[2], 1, 1, 0), 3, 3, byrow=TRUE)){
+  c11 <- costs[1, 1]
+  c12 <- costs[1, 2]
+  c13 <- costs[1, 3]
+  c21 <- costs[2, 1]
+  c22 <- costs[2, 2]
+  c23 <- costs[2, 3]
+  c31 <- costs[3, 1]
+  c32 <- costs[3, 2]
+  c33 <- costs[3, 3] 
   rho1 <- rho[1]
   rho2 <- rho[2]
   rho3 <- rho[3]
-  vd <- VDel3(k1,k2,k3,rho,Thr,costs)
-  vn <- secondDer3aux(k1,k2,k3,rho,Thr,costs)
+  vd <- VDel3(k1, k2, k3, rho, Thr, costs)
+  vn <- secondDer3aux(k1, k2, k3, rho, Thr, costs)
   ret1 <- vd[1]/vn[1]^2
   ret2 <- vd[2]/vn[2]^2
-  
+  # result
   re <- list(VAR1=ret1,VAR2=ret2)
-  
   return(re)
 }
 
-
 #########################################################################
-#### derivatives of the cost function
-#####		  	costs=cost matrix
-##################################################################################
-Der1 <- function(p,dist1,dist2,dist3,par1.1,par1.2,par2.1,par2.2,par3.1,par3.2,rho,costs) {
+#### Derivatives of the cost function
+#########################################################################
+Der1 <- function(p, dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, par3.1, par3.2, rho, costs) {
   rho1 <- rho[1]
   rho2 <- rho[2]
   rho3 <- rho[3]
@@ -300,39 +302,40 @@ Der1 <- function(p,dist1,dist2,dist3,par1.1,par1.2,par2.1,par2.2,par3.1,par3.2,r
   c31 <- costs[3,1]
   c32 <- costs[3,2]
   c33 <- costs[3,3] 
-  eq <- (rho1*(c11-c12)*dens(dist1)(p,par1.1,par1.2)+rho2*(c21-c22)*dens(dist2)(p,par2.1,par2.2)+rho3*(c31-c32)*dens(dist3)(p,par3.1,par3.2))
+  eq <- (rho1*(c11-c12)*dens(dist1)(p, par1.1, par1.2)+rho2*(c21-c22)*dens(dist2)(p, par2.1, par2.2)+rho3*(c31-c32)*dens(dist3)(p, par3.1, par3.2))
   return(eq)
 }
 
-Der2 <- function(p,dist1,dist2,dist3,par1.1,par1.2,par2.1,par2.2,par3.1,par3.2,rho,costs) {
+Der2 <- function(p, dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, par3.1, par3.2, rho, costs) {
   rho1 <- rho[1]
   rho2 <- rho[2]
   rho3 <- rho[3]
-  c11 <- costs[1,1]
-  c12 <- costs[1,2]
-  c13 <- costs[1,3]
-  c21 <- costs[2,1]
-  c22 <- costs[2,2]
-  c23 <- costs[2,3]
-  c31 <- costs[3,1]
-  c32 <- costs[3,2]
-  c33 <- costs[3,3] 
-  eq <- (rho1*(c12-c13)*dens(dist1)(p,par1.1,par1.2)+rho2*(c22-c23)*dens(dist2)(p,par2.1,par2.2)+rho3*(c32-c33)*dens(dist3)(p,par3.1,par3.2))
+  c11 <- costs[1, 1]
+  c12 <- costs[1, 2]
+  c13 <- costs[1, 3]
+  c21 <- costs[2, 1]
+  c22 <- costs[2, 2]
+  c23 <- costs[2, 3]
+  c31 <- costs[3, 1]
+  c32 <- costs[3, 2]
+  c33 <- costs[3, 3] 
+  eq <- (rho1*(c12-c13)*dens(dist1)(p, par1.1, par1.2)+rho2*(c22-c23)*dens(dist2)(p, par2.1, par2.2)+rho3*(c32-c33)*dens(dist3)(p, par3.1, par3.2))
   return(eq)
 }
+
 ##########################################################################
-##### "uniroot" function will look for the one-variable equation solution  
+##### "uniroot" function looks for the one-variable equation solution  
 ##### arguments: 	q11, q12=percentiles of the first distribution 
-#####			q31, q32=percentiles of the third distribution 
-#####		        dist1, dist2, dist3=choose the distributions
+#####			        q31, q32=percentiles of the third distribution 
+#####		         dist1, dist2, dist3=choose the distributions
 #####             between the following 2-parameter distributions: "beta", "cauchy",
 #####             "chisq" (chi-squared), "gamma", "lnorm" (lognormal), "logis" (logistic), "norm" (normal)
 #####             and "weibull".
-#####			       par1.1=first parameter of the first distribution
+#####			        par1.1=first parameter of the first distribution
 #####		   	      par1.2=second parameter of the first distribution
 #####             par2.1=first parameter of the second distribution
 #####		          par2.2=second parameter of the second distribution
-#####			par3.1=first parameter of the third distribution
+#####			        par3.1=first parameter of the third distribution
 #####		          par3.2=second parameter of the third distribution
 #####		          rho=vector of prevalences
 #####		  	      costs=cost matrix
@@ -340,7 +343,7 @@ Der2 <- function(p,dist1,dist2,dist3,par1.1,par1.2,par2.1,par2.2,par3.1,par3.2,r
 ##### value: an object of class "thresTH3" containing the two thresholds,
 #####        the prevalences and the cost matrix.  		  	
 ##################################################################################
-thresTH3 <- function(dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, par3.1, par3.2, rho, costs=matrix(c(0,1,1, rho[1]/rho[2],0,rho[3]/rho[2], 1,1,0), 3, 3, byrow=TRUE), q1=0.05, q2=0.5, q3=0.95, tol=10^(-8)){
+thresTH3 <- function(dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, par3.1, par3.2, rho, costs=matrix(c(0, 1, 1, rho[1]/rho[2], 0, rho[3]/rho[2], 1, 1, 0), 3, 3, byrow=TRUE), q1=0.05, q2=0.5, q3=0.95, tol=10^(-8)){
   # error handling
   if (sum(rho > 0 & rho < 1) != 3){
     stop("The prevalences must be in (0,1)")
@@ -364,36 +367,35 @@ thresTH3 <- function(dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, par3.1
   ord_m <- order(median)
   if (!all(ord_m==1:3)){
     pars <- matrix(c(par1.1, par1.2, par2.1, par2.2, par3.1, par3.2), byrow=T, ncol=2)
-    pars <- pars[ord_m,]
+    pars <- pars[ord_m, ]
     rho <- rho[ord_m]
-    costs <- costs[ord_m,ord_m]
-    par1.1 <- pars[1,1]
-    par1.2 <- pars[1,2]
-    par2.1 <- pars[2,1]
-    par2.2 <- pars[2,2]
-    par3.1 <- pars[3,1]
-    par3.2 <- pars[3,2]
+    costs <- costs[ord_m, ord_m]
+    par1.1 <- pars[1, 1]
+    par1.2 <- pars[1, 2]
+    par2.1 <- pars[2, 1]
+    par2.2 <- pars[2, 2]
+    par3.1 <- pars[3, 1]
+    par3.2 <- pars[3, 2]
     dist <- c(dist1, dist2, dist3)[ord_m]
     dist1 <- dist[1]
     dist2 <- dist[2]
     dist3 <- dist[3]
   }
   # end of sorting
-  p1 <- quant(dist1)(q1,par1.1,par1.2)
-  p2 <- quant(dist2)(q2,par2.1,par2.2)
-  p3 <- quant(dist3)(q3,par3.1,par3.2)
-  cut1 <- uniroot(Der1,c(p1, p2),tol=tol,dist1,dist2,dist3,par1.1,par1.2,par2.1,par2.2,par3.1,par3.2,rho,costs)$root
-  cut2 <- uniroot(Der2,c(p2, p3),tol=tol,dist1,dist2,dist3,par1.1,par1.2,par2.1,par2.2,par3.1,par3.2,rho,costs)$root
-  
-  re <- list(thres1=cut1,thres2=cut2,prev=rho.origin,costs=costs.origin,method="theoretical")
-  
-  class(re)<-"thresTH3"
-  
+  p1 <- quant(dist1)(q1, par1.1, par1.2)
+  p2 <- quant(dist2)(q2, par2.1, par2.2)
+  p3 <- quant(dist3)(q3, par3.1, par3.2)
+  cut1 <- uniroot(Der1, c(p1, p2), tol=tol, dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, par3.1, par3.2, rho, costs)$root
+  cut2 <- uniroot(Der2, c(p2, p3), tol=tol, dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, par3.1, par3.2, rho, costs)$root
+  # results
+  re <- list(thres1=cut1, thres2=cut2, prev=rho.origin, costs=costs.origin, method="theoretical")
+  class(re) <- "thresTH3"
   return(re)
 }
 
-
-##########################################################################
+############################################################################
+# Print function for class "thresTH3"
+############################################################################
 print.thresTH3 <- function(x, ...){
     cat("\nThreshold 1: ", x$thres1)
     cat("\nThreshold 2: ", x$thres2)
@@ -408,47 +410,46 @@ print.thresTH3 <- function(x, ...){
 }
 
 ##########################################################################
-#####		  	costs=cost matrix
-##### x= vector de thresholds
+### cost function
 ##################################################################################
-cost3fun <- function(x,k1,k2,k3,rho,costs=matrix(c(0,1,1, rho[1]/rho[2],0,rho[3]/rho[2], 1,1,0), 3,3,byrow=TRUE)){
+cost3fun <- function(x, k1, k2, k3, rho, costs=matrix(c(0, 1, 1, rho[1]/rho[2], 0, rho[3]/rho[2], 1, 1, 0), 3, 3, byrow=TRUE)){
   rho1 <- rho[1]
   rho2 <- rho[2]
   rho3 <- rho[3]
-  c11 <- costs[1,1]
-  c12 <- costs[1,2]
-  c13 <- costs[1,3]
-  c21 <- costs[2,1]
-  c22 <- costs[2,2]
-  c23 <- costs[2,3]
-  c31 <- costs[3,1]
-  c32 <- costs[3,2]
-  c33 <- costs[3,3] 
+  c11 <- costs[1, 1]
+  c12 <- costs[1, 2]
+  c13 <- costs[1, 3]
+  c21 <- costs[2, 1]
+  c22 <- costs[2, 2]
+  c23 <- costs[2, 3]
+  c31 <- costs[3, 1]
+  c32 <- costs[3, 2]
+  c33 <- costs[3, 3] 
   n1 <- length(k1)
   n2 <- length(k2)
   n3 <- length(k3)
-  ret <- (n1+n2+n3)*(rho1*(c11*pnorm(x[1],mean(k1),sd(k1))+c12*(pnorm(x[2],mean(k1),sd(k1))-pnorm(x[1],mean(k1),sd(k1)))+c13*(1-pnorm(x[2],mean(k1),sd(k1))))+rho2*(c21*pnorm(x[1],mean(k2),sd(k2))+c22*(pnorm(x[2],mean(k2),sd(k2))-pnorm(x[1],mean(k2),sd(k2)))+c23*(1-pnorm(x[2],mean(k2),sd(k2))))+rho3*(c31*pnorm(x[1],mean(k3),sd(k3))+c32*(pnorm(x[2],mean(k3),sd(k3))-pnorm(x[1],mean(k3),sd(k3)))+c33*(1-pnorm(x[2],mean(k3),sd(k3)))))
+  ret <- (n1 + n2 + n3)*(rho1*(c11*pnorm(x[1], mean(k1), sd(k1)) + c12*(pnorm(x[2], mean(k1), sd(k1)) - pnorm(x[1], mean(k1), sd(k1))) + c13*(1-pnorm(x[2], mean(k1), sd(k1)))) + rho2*(c21*pnorm(x[1], mean(k2), sd(k2)) + c22*(pnorm(x[2], mean(k2), sd(k2)) - pnorm(x[1], mean(k2), sd(k2))) + c23*(1-pnorm(x[2], mean(k2), sd(k2)))) + rho3*(c31*pnorm(x[1], mean(k3), sd(k3)) + c32*(pnorm(x[2], mean(k3), sd(k3)) - pnorm(x[1], mean(k3), sd(k3))) + c33*(1-pnorm(x[2], mean(k3), sd(k3)))))
   return(ret)
 }
-##########################################################################
+
 
 ################################################################################
 ############      DATA GENERATION
 ############ 	NON-PARAMETRIC RESAMPLING
-##### arguments:   k1= vector containing the first sample values 
-#####		   	k2= vector containing the second sample values 
-#####		   	k3= vector containing the third sample values 
-#####		   	B=number of bootstrap resamples
+##### arguments:   k1=vector containing the first sample values 
+#####		   	       k2=vector containing the second sample values 
+#####		   	       k3=vector containing the third sample values 
+#####		   	       B=number of bootstrap resamples
 ##### returns: two-object list [[1]]:first resample matrix, [[2]]:second resample matrix, [[3]]:third resample matrix
 ################################################################################
-resample3 <- function(k1,k2,k3,B){
+resample3 <- function(k1, k2, k3, B){
   n1 <- length(k1)
   n2 <- length(k2)
   n3 <- length(k3)
-  t1 <- matrix(sample(k1,n1*B,replace=TRUE),nrow=n1)
-  t2 <- matrix(sample(k2,n2*B,replace=TRUE),nrow=n2)
-  t3 <- matrix(sample(k3,n3*B,replace=TRUE),nrow=n3)
-  t <- list(t1,t2,t3)
+  t1 <- matrix(sample(k1, n1*B, replace=TRUE), nrow=n1)
+  t2 <- matrix(sample(k2, n2*B, replace=TRUE), nrow=n2)
+  t3 <- matrix(sample(k3, n3*B, replace=TRUE), nrow=n3)
+  t <- list(t1, t2, t3)
   return(t)
 }
 
@@ -457,7 +458,7 @@ resample3 <- function(k1,k2,k3,B){
 ### 			Threshold estimator
 #####		  	costs=cost matrix
 ########################################################################
-thresNLM3 <- function(start,k1,k2,k3,rho,costs=matrix(c(0,1,1, rho[1]/rho[2],0,rho[3]/rho[2], 1,1,0), 3,3,byrow=TRUE)){
+thresNLM3 <- function(start, k1, k2, k3, rho, costs=matrix(c(0, 1, 1, rho[1]/rho[2],0 ,rho[3]/rho[2], 1, 1, 0), 3, 3,byrow=TRUE)){
   costs.origin <- costs
   rho.origin <- rho
   k1.origin <- k1
@@ -475,30 +476,27 @@ thresNLM3 <- function(start,k1,k2,k3,rho,costs=matrix(c(0,1,1, rho[1]/rho[2],0,r
     costs <- costs[ord_m, ord_m]
   }
   # end of sorting
-  th <- nlm(cost3fun,start,k1,k2,k3,rho,costs)$estimate
-  re <- list(thres1=th[1],thres2=th[2],prev=rho.origin,costs=costs.origin,k1=k1.origin,k2=k2.origin,k3=k3.origin)  
+  # estimate
+  th <- nlm(cost3fun, start, k1, k2, k3, rho, costs)$estimate
+  # results
+  re <- list(thres1=th[1], thres2=th[2], prev=rho.origin, costs=costs.origin, k1=k1.origin, k2=k2.origin, k3=k3.origin)  
   return(re)
 }
 
 ########################################################################
-### 			Parametric Confidence Interval
-#####		  	costs=cost matrix
+### 			Parametric Confidence Intervals
 ########################################################################
-icParam3 <- function(k1,k2,k3,rho,costs=matrix(c(0,1,1, rho[1]/rho[2],0,rho[3]/rho[2], 1,1,0),3,3,byrow=TRUE),Thres,a=0.05){
-  
+icParam3 <- function(k1, k2, k3, rho, costs=matrix(c(0, 1, 1, rho[1]/rho[2], 0, rho[3]/rho[2], 1, 1, 0),3,3,byrow=TRUE), Thres, a=0.05){
   cut <- c(Thres[1],Thres[2])
-  
   se0 <- VarThr3(k1,k2,k3,rho,cut,costs)
   se <- sqrt(c(se0$VAR1,se0$VAR2))
-  
+  # CIs
   ic1 <- c(cut[1]+qnorm(a/2)*se[1],cut[1]+qnorm(1-a/2)*se[1])
   ic2 <- c(cut[2]+qnorm(a/2)*se[2],cut[2]+qnorm(1-a/2)*se[2])
-  
+  # results
   ic <- list(lower1=ic1[1],upper1=ic1[2],lower2=ic2[1],upper2=ic2[2],alpha=a, ci.method="param")
-    
   return(ic)
 }
-
 
 
 
@@ -526,7 +524,7 @@ icParam3 <- function(k1,k2,k3,rho,costs=matrix(c(0,1,1, rho[1]/rho[2],0,rho[3]/r
 #####            be stripped before the computation proceeds. Default, F.
 ##### value: the thresholds estimated
 #######################################
-thres3 <- function(k1, k2, k3, rho, costs=matrix(c(0,1,1, rho[1]/rho[2],0,rho[3]/rho[2], 1,1,0),3,3,byrow=TRUE), dist1="norm", dist2="norm", dist3="norm", start=NULL, ci.method=c("param", "boot"), B=1000, alpha=0.05, na.rm=FALSE){
+thres3 <- function(k1, k2, k3, rho, costs=matrix(c(0, 1, 1, rho[1]/rho[2],0,rho[3]/rho[2], 1, 1, 0), 3, 3, byrow=TRUE), dist1="norm", dist2="norm", dist3="norm", start=NULL, ci.method=c("param", "boot"), B=1000, alpha=0.05, na.rm=FALSE){
   # error handling
   if (sum(rho > 0 & rho < 1) != 3){
     stop("The prevalences must be in (0,1)")
@@ -611,9 +609,9 @@ thres3 <- function(k1, k2, k3, rho, costs=matrix(c(0,1,1, rho[1]/rho[2],0,rho[3]
 
 
 
-#############################################################
-## PRINT OF THRES3 CLASS
-#############################################################
+############################################################################
+# Print function for class "thres3"
+############################################################################
 print.thres3 <- function(x, ...){
   if (x$T$dist1 == "norm" & x$T$dist2 == "norm" & x$T$dist3 == "norm"){
     cat("\nEstimate:")
@@ -676,41 +674,42 @@ print.thres3 <- function(x, ...){
 
 ########################################################################
 ### 			Bootstrap Confidence Interval
-#####		  	costs=cost matrix
 ########################################################################
-icBoot3 <- function(k1,k2,k3,rho,costs=matrix(c(0,1,1, rho[1]/rho[2],0,rho[3]/rho[2], 1,1,0),3,3,byrow=TRUE),Thres,B,a=0.05,start){
-  t <- resample3(k1,k2,k3,B)
+icBoot3 <- function(k1, k2, k3, rho, costs=matrix(c(0, 1, 1, rho[1]/rho[2], 0, rho[3]/rho[2], 1, 1, 0), 3, 3, byrow=TRUE), Thres, B, a=0.05, start){
+  t <- resample3(k1, k2, k3, B)
   t1 <- t[[1]]
   t2 <- t[[2]]
   t3 <- t[[3]]
-  
+  # bootstrap
   cutsim <- sapply(1:B,function(i){
     thresNLM3(start,t1[,i],t2[,i],t3[,i],rho,costs)[1:2]
   })
+  
   cutsim1 <- unlist(cutsim[1, ])
   cutsim2 <- unlist(cutsim[2, ])
   
+  # sd
   est.se1 <- sd(cutsim1)
   est.se2 <- sd(cutsim2)
   
   
   ###### 1) NORMAL-BOOTSTRAP SE
-  norm1 <- c(Thres[1]+qnorm(a/2)*est.se1,Thres[1]+qnorm(1-a/2)*est.se1)
-  norm2 <- c(Thres[2]+qnorm(a/2)*est.se2,Thres[2]+qnorm(1-a/2)*est.se2)
+  norm1 <- c(Thres[1] + qnorm(a/2)*est.se1, Thres[1] + qnorm(1-a/2)*est.se1)
+  norm2 <- c(Thres[2] + qnorm(a/2)*est.se2, Thres[2] + qnorm(1-a/2)*est.se2)
   
-  ###### 2) PERCENTIL
-  perc1 <- (c(quantile(cutsim1,a/2),quantile(cutsim1,1-a/2)))
-  perc2 <- (c(quantile(cutsim2,a/2),quantile(cutsim2,1-a/2)))
+  ###### 2) PERCENTILE
+  perc1 <- c(quantile(cutsim1, a/2), quantile(cutsim1, 1-a/2))
+  perc2 <- c(quantile(cutsim2, a/2), quantile(cutsim2, 1-a/2))
   
-  re <- list(low.norm1=norm1[1],up.norm1=norm1[2],low.norm2=norm2[1],up.norm2=norm2[2],low.perc1=perc1[1],up.perc1=perc1[2],low.perc2=perc2[1],up.perc2=perc2[2],alpha=a, B=B, ci.method="boot")
-    
+  # results
+  re <- list(low.norm1=norm1[1], up.norm1=norm1[2], low.norm2=norm2[1], up.norm2=norm2[2], low.perc1=perc1[1], up.perc1=perc1[2], low.perc2=perc2[1], up.perc2=perc2[2], alpha=a, B=B, ci.method="boot")
   return(re)
 }
 
 ################################################################################
 ############       DATA GENERATION
 ############    PARAMETRIC RESAMPLING
-##### arguments:  dist1, dist2, dist3 =distributions assumed for the three populations. 
+##### arguments:  dist1, dist2, dist3=distributions assumed for the three populations. 
 #####  	   	      B=number of bootstrap resamples
 ##### value: three-object list [[1]]:first population resample matrix, [[2]]:second population resample matrix,
 #####         [[3]]: third population resample matrix
@@ -719,13 +718,13 @@ aux.par.boot3 <- function(dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, p
   t0 <- matrix(rand(dist1)(n1*B, par1.1, par1.2), nrow=n1) # B resamples of dist1(par1.1, par1.2) with replacement
   t1 <- matrix(rand(dist2)(n2*B, par2.1, par2.2), nrow=n2) # B resamples of dist2(par2.1, par2.2) with replacement
   t2 <- matrix(rand(dist3)(n3*B, par3.1, par3.2), nrow=n3) # B resamples of dist3(par3.1, par3.2) with replacement
-  t <- list(t0,t1,t2)
+  t <- list(t0, t1, t2)
   return(t)
 }
 
 
 ##########################################################################
-#########         GETTING PARAMETERS OF A DISTRIBUTION THROUGH fitdistr() [MASS]
+#########  GETTING PARAMETERS OF A DISTRIBUTION THROUGH fitdistr() [library MASS]
 ##########################################################################
 getParams <- function(k, dist){
   if (dist %in% c("cauchy", "gamma", "weibull")){
@@ -769,7 +768,7 @@ getParams <- function(k, dist){
 #####		  	      costs=cost matrix
 ##### returns: the 2 interval limits
 ##################################################################################
-icBootTH3 <- function(dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, par3.1, par3.2, n1, n2, n3, rho, costs=matrix(c(0,1,1, rho[1]/rho[2],0,rho[3]/rho[2], 1,1,0), 3,3,byrow=TRUE), Thres, B, a){
+icBootTH3 <- function(dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, par3.1, par3.2, n1, n2, n3, rho, costs=matrix(c(0, 1, 1, rho[1]/rho[2], 0, rho[3]/rho[2], 1, 1, 0), 3, 3, byrow=TRUE), Thres, B, a){
   # bootstrap resamples
   t <- aux.par.boot3(dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, par3.1, par3.2, n1, n2, n3, B)
   t0 <- t[[1]]
@@ -781,7 +780,7 @@ icBootTH3 <- function(dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, par3.
   pars2 <- sapply(1:B, function(i){getParams(t1[, i], dist2)})
   pars3 <- sapply(1:B, function(i){getParams(t2[, i], dist3)})
   # 2) TH cut
-  cut <- sapply(1:B,function(i){thresTH3(dist1, dist2, dist3, pars1[1, i], pars1[2, i], pars2[1, i], pars2[2, i], pars3[1,i], pars3[2,i], rho, costs)[1:2]})
+  cut <- sapply(1:B, function(i){thresTH3(dist1, dist2, dist3, pars1[1, i], pars1[2, i], pars2[1, i], pars2[2, i], pars3[1,i], pars3[2,i], rho, costs)[1:2]})
   
   cut1 <- unlist(cut[1, ])
   cut2 <- unlist(cut[2, ])
@@ -790,15 +789,15 @@ icBootTH3 <- function(dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, par3.
   est.se2 <- sd(cut2)
   
   ###### 1) NORMAL-BOOTSTRAP SE
-  norm1 <- c(Thres[1]+qnorm(a/2)*est.se1,Thres[1]+qnorm(1-a/2)*est.se1)
-  norm2 <- c(Thres[2]+qnorm(a/2)*est.se2,Thres[2]+qnorm(1-a/2)*est.se2)
+  norm1 <- c(Thres[1] + qnorm(a/2)*est.se1, Thres[1] + qnorm(1-a/2)*est.se1)
+  norm2 <- c(Thres[2] + qnorm(a/2)*est.se2, Thres[2] + qnorm(1-a/2)*est.se2)
   
   ###### 2) PERCENTILE
-  perc1 <- (c(quantile(cut1,a/2), quantile(cut1,1-a/2)))
-  perc2 <- (c(quantile(cut2,a/2), quantile(cut2,1-a/2)))
+  perc1 <- c(quantile(cut1, a/2), quantile(cut1, 1-a/2))
+  perc2 <- c(quantile(cut2, a/2), quantile(cut2, 1-a/2))
   
-  re <- list(low.norm1=norm1[1],up.norm1=norm1[2],low.norm2=norm2[1],up.norm2=norm2[2],low.perc1=perc1[1],up.perc1=perc1[2],low.perc2=perc2[1],up.perc2=perc2[2],alpha=a, B=B, ci.method="boot")
-  
+  # results
+  re <- list(low.norm1=norm1[1], up.norm1=norm1[2], low.norm2=norm2[1], up.norm2=norm2[2], low.perc1=perc1[1], up.perc1=perc1[2], low.perc2=perc2[1], up.perc2=perc2[2], alpha=a, B=B, ci.method="boot")
   return(re)
 }
 
@@ -840,9 +839,9 @@ icBootTH3 <- function(dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, par3.
 ######       lwd[4]: line width for the thresholds and their corresponding CI
 ######       Default, c(1, 1, 1, 1).
 ######  main, xlab, ...: further arguments to be passed to 'plot()'.
-######  legend: logical asking if an automatic legend should be added to the graph. Default, T.
-######  leg.pos: position of the legend. Default, "topleft". Ignored if legend=F.
-######  leg.cex: a number that reescales the size of the legend. Ignored if legend=F. Default, 1.
+######  legend: logical asking if an automatic legend should be added to the graph. Default, TRUE.
+######  leg.pos: position of the legend. Default, "topleft". Ignored if legend=FALSE.
+######  leg.cex: a number that reescales the size of the legend. Ignored if legend=FALSE. Default, 1.
 ##################################################################################
 plot.thres3 <- function(x, bw=c("nrd0", "nrd0", "nrd0"), ci=TRUE, which.boot=c("norm", "perc"), col=c(1, 2, 3, 1), lty=c(1, 1, 1, 1, 2), lwd=c(1, 1, 1, 1), main=paste0("Threshold estimates", ifelse(ci, " and CIs", "")), xlab="", legend=TRUE, leg.pos="topleft", leg.cex=1, ...){
   which.boot <- match.arg(which.boot)
@@ -886,7 +885,7 @@ plot.thres3 <- function(x, bw=c("nrd0", "nrd0", "nrd0"), ci=TRUE, which.boot=c("
 ###### a plot.thres3.
 ###### arguments:
 ######  x: 'thres3' object
-######  ci: should the confidence intervals be plotted? Default, T.
+######  ci: should the confidence intervals be plotted? Default, TRUE.
 ######  which.boot: in case 'x' contains CI computed by bootstrapping, which one should be printed?
 ######              the user can choose between "norm" (based on normal distribution)
 ######              or "perc" (based on percentiles). Default, "norm". This argument

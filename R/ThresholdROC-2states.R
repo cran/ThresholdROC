@@ -1,6 +1,11 @@
 
+##########################################################################
+###########  2 STATES
+##########################################################################
+
+
 ######################################################################
-###########       SWITCH FUNCTIONS - DISTRIBUTION CHOICE
+###########       DISTRIBUTION CHOICE
 ######################################################################
 ########          RETURNS THE DENSITY OF THE CHOSEN DISTRIBUTION
 ##### arguments: dist=character indicating any 2-parameter distribution
@@ -29,7 +34,7 @@ quant <- function(dist){
 ########          RETURNS THE DISTRIBUTION FUNCTION OF THE CHOSEN DISTRIBUTION
 ##### arguments: dist=character indicating any 2-parameter distribution
 #####            implemented in R
-##### value: the chosen quantile function
+##### value: the chosen distribution function
 ######################################################################
 p <- function(dist){
   fun <- get(paste0("p", dist))
@@ -40,7 +45,7 @@ p <- function(dist){
 ########          GENERATES RANDOM NUMBERS OF THE CHOSEN DISTRIBUTION
 ##### arguments: dist=character indicating any 2-parameter distribution
 #####            implemented in R
-##### value: the chosen quantile function
+##### value: the chosen r function
 ######################################################################
 rand <- function(dist){
   fun <- get(paste0("r", dist))
@@ -67,7 +72,7 @@ slope <- function(rho, costs=matrix(c(0,0,1,(1-rho)/rho), 2, 2, byrow=TRUE)){
 ############################################################################
 ########          CHECKING POSITIVE SQUARE ROOT
 ##### arguments: k1=vector containing the healthy sample values 
-#####		         k2= vector containing the diseased sample values
+#####		         k2=vector containing the diseased sample values
 ##### 	 	       rho=disease prevalence
 #####		  	     costs=cost matrix
 ##### value: discriminant of the expression for the optimum threshold
@@ -101,7 +106,7 @@ DensRatio2 <- function(p, dist1, dist2, par1.1, par1.2, par2.1, par2.2, rho, cos
 
 
 ############################################################################
-##### "uniroot" function will look for the one-variable equation solution  
+##### "uniroot" function looks for the one-variable equation solution  
 ##### arguments: 	q1=probability of the "left" distribution in order to determine a "low" quantile.
 ##### 	 	        q2=probability of the "right" distribution in order to determine a "high" quantile.
 #####			        dist1, dist2=choose the healthy and the diseased distributions, respectively,
@@ -143,19 +148,22 @@ thresTH2 <- function(dist1, dist2, par1.1, par1.2, par2.1, par2.2, rho, costs=ma
   }
   p1 <- quant(dist1)(q1, par1.1, par1.2)
   p2 <- quant(dist2)(q2, par2.1, par2.2)
+  # threshold estimate
   cut.t <- uniroot(DensRatio2,c(p1,p2),tol=tol,dist1,dist2,par1.1,par1.2,par2.1,par2.2,rho,costs)$root
-  
+  # add slope
   beta <- slope(rho, costs)
-  
+  # results
   re <- list(thres=cut.t, prev=rho.origin, costs=costs.origin, R=beta, method="theoretical")
-  
+  # return
   class(re) <- "thresTH2"
-  
   return(re)
 }
 
 
 ############################################################################
+# Print function for class "thresTH2"
+############################################################################
+
 print.thresTH2 <- function(x, ...){
     cat("\nThreshold:", x$thres)
     cat("\n")
@@ -177,6 +185,7 @@ secondDer2 <- function(x){
   if (class(x) != "thres2"){
     stop("'x' must be of class 'thres2'")
   }
+  # function
   if (x$T$method=="empirical"){
     stop("'x' has been computed with method='empirical', cannot compute the second derivative of the cost function")
   }else if (x$T$method=="equal" | x$T$method=="unequal"){
@@ -210,7 +219,7 @@ secondDer2 <- function(x){
 
 
 ###########################################################################
-############      EQUAL VARIANCES
+############      ASSUMING EQUAL VARIANCES
 ##########################################################################
 ############      FUNCTION OF POOLED VARIANCE
 ##########################################################################
@@ -226,7 +235,7 @@ varPooled <- function(k1, k2){
 }
 
 ##########################################################################
-############   1) FUNCTION OF THRESHOLD JUND (EQUAL VARIANCES)
+############   1) FUNCTION OF THRESHOLD - JUND (EQUAL VARIANCES)
 ##########################################################################
 ##### arguments:  k1=vector containing the healthy sample values 
 #####		         	k2=vector containing the diseased sample values 
@@ -245,20 +254,20 @@ thresEq2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, by
     g <- k1; k1 <- k2; k2 <- g
   }
   beta <- slope(rho, costs)
+  # threshold estimate
   cut <- (2*varPooled(k1,k2)*log(beta) - (mean(k1)^2 - mean(k2)^2))/(2*(mean(k2) - mean(k1)))
-  
+  # returning results
   re <- list(thres=cut, prev=rho.origin, costs=costs.origin, R=beta, method="equal", k1=k1.origin, k2=k2.origin)
-
   return(re)
 }
 
 
 
 ##########################################################################
-###########    2) FUNCTION OF THRESHOLD JUND (UNEQUAL VARIANCES)
+###########    2) FUNCTION OF THRESHOLD - JUND (UNEQUAL VARIANCES)
 ##########################################################################
 ##### arguments:  k1=vector containing the healthy sample values 
-#####		   	      k2= vector containing the diseased sample values 
+#####		   	      k2=vector containing the diseased sample values 
 #####		        	rho=disease prevalence
 #####		        	costs=cost matrix
 ##### value: the threshold estimated by the two samples considering the population variances unequal
@@ -274,23 +283,23 @@ thresUn2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, by
     g <- k1; k1 <- k2; k2 <- g
   }
   ctrl <- sqroot(k1, k2, rho, costs) 	
-  if (ctrl>=0){							
+  if (ctrl>=0){
+    # threshold estimate
     cut <- (var(k2)*mean(k1) - var(k1)*mean(k2) + sd(k1)*sd(k2)*sqrt(ctrl))/(var(k2) - var(k1))}
   else{
     cut <- NA
     warning("Negative discriminant; cannot solve the second-degree equation")
   }
   beta <- slope(rho, costs)
-  
+  # returning results
   re <- list(thres=cut, prev=rho.origin, costs=costs.origin, R=beta, method="unequal", k1=k1.origin, k2=k2.origin)
-  
   return(re)
 }
 
 
 
 ##########################################################################
-#########         EMPIRICAL
+#########         EMPIRICAL METHOD
 ##########################################################################
 #########      3) COST-MINIMISING THRESHOLD (EMPIRICAL) FUNCTION
 ##########################################################################
@@ -298,6 +307,7 @@ thresUn2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, by
 #####		   	     k2=vector containing the diseased sample values
 #####  	   	     rho=disease prevalence
 #####		   	     costs=cost matrix
+#####            extra.info=should extra information be added to the output? Default, FALSE
 ##### value: the threshold estimated by the two samples through the empirical estimator
 ##########################################################################
 thresEmp2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE), extra.info=FALSE){
@@ -375,7 +385,7 @@ thresEmp2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, b
 }
 
 #############################################################
-## PRINT OF THRES2 CLASS
+## Print function for class "thres2"
 #############################################################
 print.thres2 <- function(x, ...){
   if (x$T$method == "parametric"){
@@ -442,8 +452,9 @@ print.thres2 <- function(x, ...){
   }
 }
 
+
 ##########################################################################
-#########         GETTING PARAMETERS OF A DISTRIBUTION THROUGH fitdistr() [MASS]
+#########         GETTING PARAMETERS OF A DISTRIBUTION THROUGH fitdistr() [library MASS]
 ##########################################################################
 getParams <- function(k, dist){
   if (dist %in% c("cauchy", "gamma", "weibull")){
@@ -507,7 +518,7 @@ getParams <- function(k, dist){
 #####            extra.info=when using method="empirical", if set to T it returns
 #####            extra information about the computation of the threshold. Ignored when method!="empirical".
 #####            na.rm=a logical value indicating whether NA values in k1 and k2 should
-#####            be stripped before the computation proceeds. Default, F.
+#####            be stripped before the computation proceeds. Default, FALSE.
 ##### value: the threshold estimated
 ##########################################################################
 thres2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE), method=c("equal", "unequal", "empirical", "parametric"), dist1=NULL, dist2=NULL, ci.method=c("delta", "boot"), B=1000, alpha=0.05, extra.info=FALSE, na.rm=FALSE){
@@ -600,7 +611,7 @@ thres2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byro
 
 
 ##########################################################################
-############      VARIANCES ESTIMATORS
+############      VARIANCE ESTIMATORS
 ############	    EQUAL VARIANCES
 ##########################################################################
 ############       FUNCTION OF ML VARIANCE OF VARIANCE ESTIMATOR
@@ -615,7 +626,7 @@ varVarEq <- function(k1, k2){
   return(est)
 }
 ##########################################################################
-############       FUNCTION OF ML VARIANCE OF MEAN ESTIMATOR  (DIS+NON.DIS)
+############       FUNCTION OF Maximum Likelihood VARIANCE OF MEAN ESTIMATOR  (DIS+NON.DIS)
 ##### arguments:  k1=vector containing the healthy sample values 
 #####		   	      k2=vector containing the diseased sample values 
 #####		   	      t=size of the sample whose mean estimator variance we wish to estimate 
@@ -628,9 +639,9 @@ varMeanEq <- function(k1, k2, t){
 
 ##########################################################################
 ##########################################################################
-############       PARTIAL DERIVATIVES.............
+############       PARTIAL DERIVATIVES... (Skaltsa et al 2010)
 ##########################################################################
-############       OF COMMON VARIANCE
+############       ...OF COMMON VARIANCE
 ##### arguments:  k1=vector containing the healthy sample values 
 #####		          k2=vector containing the diseased sample values 
 #####		   	      rho=disease prevalence
@@ -644,7 +655,7 @@ derVarEq <- function(k1, k2, rho, costs){
 }
 
 ##########################################################################
-############       OF DISEASED MEAN
+############       ...OF DISEASED MEAN
 ##### arguments:  k1=vector containing the healthy sample values 
 #####		        	k2=vector containing the diseased sample values 
 #####		   	      rho=disease prevalence
@@ -652,12 +663,12 @@ derVarEq <- function(k1, k2, rho, costs){
 ##### value: threshold estimator partial derivative with respect to the diseased population mean
 ##########################################################################
 derMeanDisEq <- function(k1, k2, rho, costs){
-  est <- 1/2-(varPooled(k1,k2)*log(slope(rho,costs)))/((mean(k2) - mean(k1))^2)
+  est <- 1/2 - (varPooled(k1,k2)*log(slope(rho,costs)))/((mean(k2) - mean(k1))^2)
   return(est)
 }
 
 ###################################################################################
-############      OF NON-DISEASED MEAN
+############      ...OF NON-DISEASED MEAN
 ##### arguments:  k1=vector containing the healthy sample values 
 #####		   	      k2=vector containing the diseased sample values 
 #####		   	      rho=disease prevalence
@@ -665,12 +676,12 @@ derMeanDisEq <- function(k1, k2, rho, costs){
 ##### value: threshold estimator partial derivative with respect to the diseased population variance
 ##################################################################################
 derMeanNDisEq <- function(k1, k2, rho, costs){
-  est <- 1/2+(varPooled(k1,k2)*log(slope(rho,costs)))/((mean(k2) - mean(k1))^2)
+  est <- 1/2 + (varPooled(k1,k2)*log(slope(rho,costs)))/((mean(k2) - mean(k1))^2)
   return(est)
 }
 
 ##################################################################################
-############ 1a) FUNCTION OF VARIANCE OF THRESHOLD (EQUAL VARIANCES)
+############ 1) FUNCTION OF VARIANCE OF THRESHOLD (EQUAL VARIANCES)
 ############       DELTA METHOD
 ##### arguments:  k1=vector containing the healthy sample values 
 #####		        	k2=vector containing the diseased sample values 
@@ -679,7 +690,7 @@ derMeanNDisEq <- function(k1, k2, rho, costs){
 ##### value: delta method threshold variance (assuming equal variances)
 ##################################################################################
 varDeltaEq2 <- function(k1, k2, rho, costs){
-  if(mean(k1)>mean(k2)){
+  if(mean(k1) > mean(k2)){
     rho <- 1-rho
     costs <- costs[, 2:1] # change c.t.pos <-> c.t.neg and c.f.pos <-> c.f.neg
     g <- k1; k1 <- k2; k2 <- g
@@ -690,7 +701,7 @@ varDeltaEq2 <- function(k1, k2, rho, costs){
   # matrices
   d <- matrix(c(derMeanNDisEq(k1, k2, rho, costs), derMeanDisEq(k1, k2, rho, costs), derVarEq(k1, k2, rho, costs)), byrow=T, ncol=3, nrow=1)
   sigma <- matrix(c(varMeanEq(k1, k2, n2), 0, 0, 0, varMeanEq(k1, k2, n1), 0, 0, 0, varVarEq(k1, k2)), byrow=T, ncol=3, nrow=3)
-  # Var(T)=d*sigma*d^T
+  # Var(T)=d*sigma*d^T, Skaltsa et al 2010
   est <- d%*%sigma%*%t(d)
   return(est)
 }
@@ -734,7 +745,7 @@ varVarUn <- function(k, t){
 ##################################################################################
 ############       FUNCTION OF ML VARIANCE OF MEAN ESTIMATOR  (DIS+NON.DIS)
 ##### arguments:  k=vector containing the sample values
-##### 		t=sample size
+##### 		        t=sample size
 ##### value: Maximum-Likelihood variance of mean estimator (unequal variances assumed)
 ##################################################################################
 varMeanUn <- function(k, t){
@@ -743,13 +754,13 @@ varMeanUn <- function(k, t){
 }
 
 #################################################################################
-############       PARTIAL DERIVATIVES.............
+############       PARTIAL DERIVATIVES...
 #################################################################################
-############       OF DISEASED MEAN
+############       ...OF DISEASED MEAN
 ##### arguments:  k1=vector containing the healthy sample values 
-#####		   	k2= vector containing the diseased sample values 
-#####		   	rho=diseased sample size
-#####		  	costs=cost matrix
+#####		   	      k2=vector containing the diseased sample values 
+#####		   	      rho=diseased sample size
+#####		  	      costs=cost matrix
 ##### value: threshold estimator partial derivative with respect to the diseased population mean
 #####              (assuming unequal variances)
 #################################################################################
@@ -759,7 +770,7 @@ derMeanDisUn <- function(k1, k2, rho, costs){
 }
 
 #################################################################################
-############       OF NON-DISEASED MEAN
+############       ...OF NON-DISEASED MEAN
 ##### arguments:  k1=vector containing the healthy sample values 
 #####		   	k2= vector containing the diseased sample values 
 #####		   	rho=diseased sample size
@@ -773,7 +784,7 @@ derMeanNDisUn <- function(k1, k2, rho, costs){
 }
 
 #################################################################################
-############       OF DISEASED VARIANCE
+############       ...OF DISEASED VARIANCE
 ##### arguments:  k1=vector containing the healthy sample values 
 #####		   	      k2=vector containing the diseased sample values 
 #####		   	      rho=disease prevalence
@@ -788,7 +799,7 @@ derVarDisUn <- function(k1, k2, rho, costs){
 }
 
 #################################################################################
-############       OF NON-DISEASED VARIANCE
+############       ...OF NON-DISEASED VARIANCE
 ##### arguments:  k1=vector containing the healthy sample values 
 #####		   	      k2=vector containing the diseased sample values 
 #####		   	      rho=disease prevalence
@@ -803,7 +814,7 @@ derVarNDisUn <- function(k1, k2, rho, costs){
 }
 
 #################################################################################
-############ 2a) FUNCTION OF VARIANCE OF THRESHOLD (UNEQUAL VARIANCES)
+############ 2) FUNCTION OF VARIANCE OF THRESHOLD (UNEQUAL VARIANCES)
 ############       DELTA METHOD
 ##### arguments:  k1=vector containing the healthy sample values 
 #####		   	      k2=vector containing the diseased sample values 
@@ -812,7 +823,7 @@ derVarNDisUn <- function(k1, k2, rho, costs){
 ##### value: delta method threshold variance (assuming unequal variances)
 #################################################################################
 varDeltaUn2 <- function(k1, k2, rho, costs){
-  if(mean(k1)>mean(k2)){
+  if(mean(k1) > mean(k2)){
     rho <- 1-rho
     costs <- costs[, 2:1] # change c.t.pos <-> c.t.neg and c.f.pos <-> c.f.neg
     g <- k1; k1 <- k2; k2 <- g
@@ -828,7 +839,7 @@ varDeltaUn2 <- function(k1, k2, rho, costs){
     # matrices
     d <- matrix(c(derMeanNDisUn(k1, k2, rho, costs), derMeanDisUn(k1, k2, rho, costs), derVarNDisUn(k1, k2, rho, costs), derVarDisUn(k1, k2, rho, costs)), byrow=T, ncol=4, nrow=1)
     sigma <- matrix(c(varMeanUn(k1, n1), 0, 0, 0, 0, varMeanUn(k2, n2), 0, 0, 0, 0, varVarUn(k1, n1), 0, 0, 0, 0, varVarUn(k2, n2)), byrow=T, ncol=4, nrow=4)
-    # Var(T)
+    # Var(T) following Skaltsa et al 2010
     est <- d%*%sigma%*%t(d)
   }
   return(est)
@@ -838,10 +849,10 @@ varDeltaUn2 <- function(k1, k2, rho, costs){
 ############ 	 FUNCTION OF CONFIDENCE INTERVAL 1 - UNEQUAL
 ############       DELTA METHOD-NORMAL APPROXIMATION
 ##### arguments:  k1=vector containing the healthy sample values 
-#####		   	k2= vector containing the diseased sample values 
-#####		   	rho=diseased sample size
-#####		  	costs=cost matrix
-#####		   	a=significance level
+#####		         	k2=vector containing the diseased sample values 
+#####		   	      rho=diseased sample size
+#####		  	      costs=cost matrix
+#####		   	      a=significance level
 ##### value: confidence interval limits
 ##################################################################################
 icDeltaUn2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE), Thres, a=0.05){
@@ -851,7 +862,6 @@ icDeltaUn2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, 
   ic <- list(lower=ic1, upper=ic2, alpha=a, ci.method="delta")  
   return(ic)
 }
-
 
 
 
@@ -878,7 +888,7 @@ resample2 <- function(k1, k2, B){
 ###################################################################################
 ############          CONFIDENCE INTERVALS
 ###################################################################################
-############          BOOTSTRAP STORIES
+############               BOOTSTRAP
 ###################################################################################
 ###################################################################################
 ###############    FUNCTION OF BOOTSTRAP CONFIDENCE INTERVALS 
@@ -894,7 +904,7 @@ resample2 <- function(k1, k2, B){
 ##### returns: the 2 interval limits
 ##################################################################################
 icBootEq2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE), Thres, B, a=0.05){
-  if(mean(k1)>mean(k2)){
+  if(mean(k1) > mean(k2)){
     rho <- 1-rho
     costs <- costs[, 2:1] # change c.t.pos <-> c.t.neg and c.f.pos <-> c.f.neg
     g <- k1; k1 <- k2; k2 <- g
@@ -904,6 +914,7 @@ icBootEq2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, b
   t0 <- t[[1]]
   t1 <- t[[2]]
   
+  # bootstrap
   cut <- sapply(1:B,function(i){thresEq2(t0[,i],t1[,i],rho,costs)[[1]]})
   est.se <- sd(cut)
   
@@ -913,8 +924,8 @@ icBootEq2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, b
   ###### 2) PERCENTILE
   percentil <- (c(quantile(cut,a/2), quantile(cut,1-a/2)))
   
+  # results
   re <- list(low.norm=norm.bootSE[1], up.norm=norm.bootSE[2], low.perc=percentil[1], up.perc=percentil[2], alpha=a, B=B, ci.method="boot")
-  
   return(re)
 }
 
@@ -926,7 +937,7 @@ icBootEq2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, b
 ##########               1) BOOTSTRAP VERSION OF S.E.- NORMAL
 ##########               2) PERCENTILE
 ##### arguments:   k1=vector containing the healthy sample values 
-#####		   	       k2= vector containing the diseased sample values 
+#####		   	       k2=vector containing the diseased sample values 
 #####		   	       B=number of bootstrap resamples
 #####		   	       a=significance level
 #####		   	       rho=disease prevalence
@@ -934,7 +945,7 @@ icBootEq2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, b
 ##### value: the 2 interval limits
 ##################################################################################
 icBootUn2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE), Thres, B, a=0.05){
-  if(mean(k1)>mean(k2)){
+  if(mean(k1) > mean(k2)){
     rho <- 1-rho
     costs <- costs[, 2:1] # change c.t.pos <-> c.t.neg and c.f.pos <-> c.f.neg
     g <- k1; k1 <- k2; k2 <- g
@@ -954,8 +965,8 @@ icBootUn2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, b
   ###### 2) PERCENTILE
   percentil <- (c(quantile(na.omit(cut),a/2), quantile(na.omit(cut),1-a/2)))
   
+  # results
   re <- list(low.norm=norm.bootSE[1], up.norm=norm.bootSE[2], low.perc=percentil[1], up.perc=percentil[2], alpha=a, B=B, ci.method="boot")
-  
   return(re)
 }
 
@@ -999,8 +1010,8 @@ icEmp2 <- function(k1,k2,rho,costs=matrix(c(0,0,1,(1-rho)/rho),2,2, byrow=TRUE),
   ###### 2) PERCENTILE
   percentil <- (c(quantile(cut,a/2), quantile(cut,1-a/2)))
   
+  # results
   re <- list(low.norm=norm[1], up.norm=norm[2], low.perc=percentil[1], up.perc=percentil[2], alpha=a, B=B, ci.method="boot")
-  
   return(re)
 }
 
@@ -1051,7 +1062,7 @@ icBootTH <- function(dist1, dist2, par1.1, par1.2, par2.1, par2.2, n1, n2, rho, 
   pars2 <- sapply(1:B, function(i){getParams(t1[, i], dist2)})
   # 2) TH cut
   cut <- sapply(1:B,function(i){thresTH2(dist1, dist2, pars1[1, i], pars1[2, i], pars2[1, i], pars2[2, i], rho, costs)[[1]]})
-  
+  # sd
   est.se <- sd(na.omit(cut))
   
   ###### 1) NORMAL-BOOTSTRAP SE
@@ -1060,22 +1071,25 @@ icBootTH <- function(dist1, dist2, par1.1, par1.2, par2.1, par2.2, n1, n2, rho, 
   ###### 2) PERCENTILE
   percentil <- (c(quantile(na.omit(cut),a/2), quantile(na.omit(cut),1-a/2)))
   
+  # results
   re <- list(low.norm=norm.bootSE[1], up.norm=norm.bootSE[2], low.perc=percentil[1], up.perc=percentil[2], alpha=a, B=B, ci.method="boot")
-  
   return(re)
 }
 
 
 
 ##################################################################################
-###### 	PLOTCOSTROC (classes thres2 i thres3)
+###### 	PLOTCOSTROC ("thres2" and "thres3" classes)
 ##################################################################################
-######		COST FUNCTION PLOT + ROC CURVE, OPTIMAL THRESHOLD, SENSITIVITY, SPECIFICITY
-######  plotCost function provides two graphics:
-######  1) the empirical cost function with the cost minimising threshold in red
-######  2) the step ROC curve with the sensitivity and specificity achieved in red
+######		COST FUNCTION PLOT + ROC CURVE, OPTIMAL THRESHOLD, SENSITIVITY, SPECIFICITY (2-state)
+######  2-states: plotCost function provides two graphics:
+######  1) the cost function with the cost minimising threshold in red
+######  2) the ROC curve with the sensitivity and specificity achieved in red
+######  3-states: plotCost function provides two graphics:
+######  The contribution of both thresholds to the cost function, with the minimising thresholds in res
 ######  arguments:
 ######        x: 'thres2' or 'thres3' object 
+######        type: type of pline for plots
 ##################################################################################
 plotCostROC <- function(x, type="l", ...){
   if (!(class(x) %in% c("thres2", "thres3"))){
@@ -1315,9 +1329,9 @@ plotCostROC <- function(x, type="l", ...){
 ######       lwd[3]: line width for the threshold and its corresponding CI
 ######       Default, c(1, 1, 1).
 ######  main, xlab, ...: further arguments to be passed to 'plot()'.
-######  legend: logical asking if an automatic legend should be added to the graph. Default, T.
-######  leg.pos: position of the legend. Default, "topleft". Ignored if legend=F.
-######  leg.cex: a number that reescales the size of the legend. Ignored if legend=F. Default, 1.
+######  legend: logical asking if an automatic legend should be added to the graph. Default, TRUE.
+######  leg.pos: position of the legend. Default, "topleft". Ignored if legend=FALSE.
+######  leg.cex: a number that reescales the size of the legend. Ignored if legend=FALSE. Default, 1.
 ##################################################################################
 plot.thres2 <- function(x, bw=c("nrd0", "nrd0"), ci=TRUE, which.boot=c("norm", "perc"), col=c(1, 2, 1), lty=c(1, 1, 1, 2), lwd=c(1, 1, 1), main=paste0("Threshold estimate ", ifelse(ci, "and CI ", ""), "(method ", x$T$method, ")"), xlab="", legend=TRUE, leg.pos="topleft", leg.cex=1, ...){
   which.boot <- match.arg(which.boot)
@@ -1355,7 +1369,7 @@ plot.thres2 <- function(x, bw=c("nrd0", "nrd0"), ci=TRUE, which.boot=c("norm", "
 ###### a plot.thres2.
 ###### arguments:
 ######  x: 'thres2' object
-######  ci: should the confidence interval be plotted? Default, T.
+######  ci: should the confidence interval be plotted? Default, TRUE.
 ######  which.boot: in case 'x' contains CI computed by bootstrapping, which one should be printed?
 ######              the user can choose between "norm" (based on normal distribution)
 ######              or "perc" (based on percentiles). Default, "norm". This argument
@@ -1386,7 +1400,7 @@ lines.thres2 <- function(x, ci=TRUE, which.boot=c("norm", "perc"), col=1, lty=c(
 
 
 ############################################################################
-####	    SAMPLE SIZE
+####	    SAMPLE SIZE ESTIMATION
 ############################################################################
 
 ############################################################################
@@ -1492,7 +1506,7 @@ parDerVarNonDisUn <- function(par1.1,par1.2,par2.1,par2.2,rho,costs){
 }
 
 ##########################################################################
-############ MINIMUM REQUIRED SAMPLE SIZE AND OPTIMUM THRESHOLD
+############ SAMPLE SIZE RATIO AND MINIMUM REQUIRED SAMPLE SIZE
 ##### arguments:
 #####  par1.1=healthy population mean
 #####  par1.2=healthy population standard deviation
@@ -1536,12 +1550,13 @@ SS <- function(par1.1, par1.2, par2.1, par2.2=NULL, rho, width, costs=matrix(c(0
   par1.1.origin <- par1.1
   par2.1.origin <- par2.1
   L <- width/2
-  if (par1.1>par2.1){
-    rho <- 1-rho
+  if (par1.1 > par2.1){
+    rho <- 1 - rho
     costs <- costs[, 2:1] # change c.t.pos <-> c.t.neg and c.f.pos <-> c.f.neg
     g <- par1.1; par1.1 <- par2.1; par2.1 <- g
     f <- par1.2; par1.2 <- par2.2; par2.2 <- f
   }
+  # slope
   R <- slope(rho, costs)
   if(var.equal){
     num <- 1/2-par1.2^2*log(R)/(par2.1-par1.1)^2
@@ -1562,7 +1577,7 @@ SS <- function(par1.1, par1.2, par2.1, par2.2=NULL, rho, width, costs=matrix(c(0
   }
   est.dis <- epsilon*est.non.dis
   
-  if (par1.1.origin>par2.1.origin){
+  if (par1.1.origin > par2.1.origin){
     auxiliar <- est.non.dis
     est.non.dis <- est.dis
     est.dis <- auxiliar
@@ -1575,7 +1590,7 @@ SS <- function(par1.1, par1.2, par2.1, par2.2=NULL, rho, width, costs=matrix(c(0
 } 
 
 #############################################################
-## PRINT OF SS CLASS
+## Print function for class "SS"
 #############################################################
 print.SS <- function(x, ...){
     cat("Optimum SS Ratio: ", x$epsilon)
