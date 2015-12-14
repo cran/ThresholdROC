@@ -29,7 +29,7 @@ method for computing the confidence intervals for sensitivity, specificity, pred
 were data collected in a case-control study? Default, \code{FALSE}.
 }
   \item{p}{
-disease prevalence (only when \code{casecontrol=T}; otherwise, this parameter is ignored).
+disease prevalence (only when \code{casecontrol = TRUE}; otherwise, this parameter is ignored).
 }
   \item{conf.level}{
 confidence level for the confidence intervals. Default, 95\%.

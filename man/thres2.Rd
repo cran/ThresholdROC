@@ -43,7 +43,7 @@ distribution to be assumed for the diseased population. See \bold{Details}.
 method to be used for the confidence intervals computation. The user can specify just the initial letters. Default, \code{"delta"}. See \bold{Details} for more information about the methods available.
 }
   \item{B}{
-number of bootstrap resamples when \code{ci.method="boot"}. Otherwise, ignored. Default, 1000.
+number of bootstrap resamples when \code{ci.method = "boot"}. Otherwise, ignored. Default, 1000.
 }
   \item{alpha}{
 significance level for the confidence interval. Default, 0.05.
@@ -88,13 +88,13 @@ An object of class \code{thres2}, which is a list with two components:
   
   \code{cost}  the minimum cost associated with \code{T$thres}.
   
-  \code{tot.thres} vector of possible thresholds. Only if \code{extra.info = T}.
+  \code{tot.thres} vector of possible thresholds. Only if \code{extra.info = TRUE}.
   
-  \code{tot.cost} vector of empirical costs. Only if \code{extra.info = T}.
+  \code{tot.cost} vector of empirical costs. Only if \code{extra.info = TRUE}.
   
   \code{tot.spec.c}  complementary of the vector of empirical specificities (1-spec). Only if \code{extra.info = T}.
   
-  \code{tot.sens}  vector of empirical sensitivities. Only if \code{extra.info = T}.
+  \code{tot.sens}  vector of empirical sensitivities. Only if \code{extra.info = TRUE}.
   
   When \code{method = "parametric"}, \code{T} also contains:
   
@@ -107,7 +107,7 @@ An object of class \code{thres2}, which is a list with two components:
   \code{pars2}  a numeric vector containing the estimation of the parameters of \code{dist2}.
 
   }
-\item{CI }{When \code{ci.method="delta"}, a list of four components:
+\item{CI }{When \code{ci.method = "delta"}, a list of four components:
 
   \code{lower}  the lower limit of the confidence interval.
 
@@ -117,7 +117,7 @@ An object of class \code{thres2}, which is a list with two components:
   
   \code{ci.method} method used for the confidence intervals computation.
   
-  When \code{ci.method="boot"}, a list of seven components:
+  When \code{ci.method = "boot"}, a list of seven components:
   
   \code{low.norm}  the lower limit of the bootstrap confidence interval based on the normal distribution.
   

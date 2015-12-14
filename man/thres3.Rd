@@ -47,7 +47,7 @@ when the three distributions \code{dist1}, \code{dist2} and \code{dist3} are \co
 method to be used for the confidence intervals computation. The user can specify just the initial letters. Default, \code{"param"}. See \bold{Details}.
 }
   \item{B}{
-number of bootstrap resamples when \code{ci.method="boot"}. Otherwise, ignored. Default, 1000.
+number of bootstrap resamples when \code{ci.method = "boot"}. Otherwise, ignored. Default, 1000.
 }
   \item{alpha}{
 significance level for the confidence interval. Default, 0.05.
@@ -97,7 +97,7 @@ An object of class \code{thres3}, which is a list with two components:
   \code{pars3}  a numeric vector containing the estimation of the parameters of \code{dist3}.
 }
 
-\item{CI }{When \code{ci.method="param"}, a list of six components:
+\item{CI }{When \code{ci.method = "param"}, a list of six components:
 
   \code{lower1}  the lower limit of the confidence interval for the first threshold.
 
@@ -111,7 +111,7 @@ An object of class \code{thres3}, which is a list with two components:
   
   \code{ci.method} method used for the confidence intervals computation.
   
-  When \code{ci.method="boot"}, a list of eleven components:
+  When \code{ci.method = "boot"}, a list of eleven components:
   
   \code{low.norm1}  the lower limit of the bootstrap confidence interval for the first threshold based on the normal distribution.
   
