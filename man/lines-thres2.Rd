@@ -18,7 +18,7 @@ The function includes vertical lines for the threshold and confidence interval i
 an object of class \code{thres2}.
 }
   \item{ci}{
-should the confidence interval be plotted? Default, \code{TRUE}.
+should the confidence interval be plotted? Default, \code{TRUE}. No confidence interval will be plotted if \code{x} does not contain one (that is, \code{x} is \code{NULL}).
 }
   \item{which.boot}{
 in case \code{x} contains confidence intervals computed by bootstrapping, which one should be printed? The user can choose between \code{"norm"} (based on normal distribution) or \code{"perc"} (based on percentiles). Default, \code{"norm"}. This argument is ignored if the confidence intervals were computed by the delta method.
@@ -66,10 +66,12 @@ k2 <- rnorm(n2, par2.1, par2.2) # diseased
 
 thres <- thres2(k1, k2, rho, method="eq", ci.method="d")
 plot(thres, col=c(1, 2, 4), lwd=c(2, 2, 1), leg.pos="topright")
+thresunequal <- thres2(k1, k2, rho, method="unequal", ci=FALSE)
+lines(thresunequal, col=3) # almost the same; no confidence interval
 
 \dontrun{
-thresboot <- thres2(k1, k2, rho, method="emp", ci.method="b")
-lines(thresboot, col=3, which.boot="norm")
+  thresboot <- thres2(k1, k2, rho, method="emp", ci.method="b")
+  lines(thresboot, col=5, which.boot="norm")
 }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

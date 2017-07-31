@@ -11,7 +11,7 @@ This function computes the threshold estimate and its corresponding confidence i
 thres2(k1, k2, rho,
   costs = matrix(c(0, 0, 1, (1 - rho)/rho), 2, 2, byrow = TRUE),
   method = c("equal", "unequal", "empirical", "parametric"),
-  dist1 = NULL, dist2 = NULL, ci.method = c("delta", "boot"),
+  dist1 = NULL, dist2 = NULL, ci = TRUE, ci.method = c("delta", "boot"),
   B = 1000, alpha = 0.05, extra.info = FALSE, na.rm = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -39,8 +39,11 @@ distribution to be assumed for the healthy population. See \bold{Details}.
 distribution to be assumed for the diseased population. See \bold{Details}.
 
 }
+  \item{ci}{
+  should a confidence interval be calculated? Default, \code{TRUE}. The user can set it to \code{FALSE} to supress the calculation of any confidence interval (in that case, arguments \code{ci.method}, \code{B} and \code{alpha} are ignored).
+}
   \item{ci.method}{
-method to be used for the confidence intervals computation. The user can specify just the initial letters. Default, \code{"delta"}. See \bold{Details} for more information about the methods available.
+method to be used for the confidence intervals calculation. The user can specify just the initial letters. Default, \code{"delta"}. See \bold{Details} for more information about the methods available.
 }
   \item{B}{
 number of bootstrap resamples when \code{ci.method = "boot"}. Otherwise, ignored. Default, 1000.
@@ -115,7 +118,7 @@ An object of class \code{thres2}, which is a list with two components:
   
   \code{alpha}  significance level provided by the user.
   
-  \code{ci.method} method used for the confidence intervals computation.
+  \code{ci.method} method used for the confidence intervals calculation.
   
   When \code{ci.method = "boot"}, a list of seven components:
   
@@ -129,9 +132,11 @@ An object of class \code{thres2}, which is a list with two components:
   
   \code{alpha}  significance level provided by the user.
   
-  \code{B}  number of bootstrap resamples.
+  \code{B}  number of bootstrap resamples used.
   
   \code{ci.method}  method used for the confidence intervals computation.
+  
+  When \code{ci = FALSE}, \code{NULL}.
   }
 }
 \references{
@@ -173,6 +178,11 @@ k2 <- rlnorm(55)
 rho <- 0.3
 thres2(k1, k2, rho, method="param", ci.method="boot", dist1="norm", dist2="lnorm")
 }
+
+# supress confidence intervals calculation
+thres2(k1, k2, rho, method="equal", ci=FALSE)
+thres2(k1, k2, rho, method="empirical", ci=FALSE)
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

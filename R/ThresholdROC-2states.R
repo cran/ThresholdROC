@@ -391,17 +391,21 @@ print.thres2 <- function(x, ...){
   if (x$T$method == "parametric"){
     cat("\nEstimate:")
     cat("\n  Threshold: ", x$T$thres)
-    cat("\n")
-    cat("\nConfidence intervals (parametric bootstrap):")
-    cat("\n  CI based on normal distribution:", x$CI$low.norm, " - ", x$CI$up.norm)
-    cat("\n  CI based on percentiles:", x$CI$low.perc, " - ", x$CI$up.perc)
-    cat("\n  Bootstrap resamples:", x$CI$B)
+    if (!is.null(x$CI)){
+      cat("\n")
+      cat("\nConfidence intervals (parametric bootstrap):")
+      cat("\n  CI based on normal distribution:", x$CI$low.norm, " - ", x$CI$up.norm)
+      cat("\n  CI based on percentiles:", x$CI$low.perc, " - ", x$CI$up.perc)
+      cat("\n  Bootstrap resamples:", x$CI$B)
+    }
     cat("\n")
     cat("\nParameters used:")
     cat("\n  Disease prevalence:", x$T$prev)
     cat("\n  Costs (Ctp, Cfp, Ctn, Cfn):", x$T$costs)
     cat("\n  R:", x$T$R)
-    cat("\n  Significance Level: ", x$CI$alpha)
+    if (!is.null(x$CI)){
+      cat("\n  Significance Level: ", x$CI$alpha)
+    }
     cat("\n  Method:", x$T$method)
     cat("\n  Distribution assumed for the healthy sample: ", x$T$dist1, "(", round(x$T$pars1[1], 2), ", ", round(x$T$pars1[2], 2), ")", sep="")
     cat("\n  Distribution assumed for the diseased sample: ", x$T$dist2, "(", round(x$T$pars2[1], 2), ", ", round(x$T$pars2[2], 2), ")", sep="")
@@ -411,43 +415,51 @@ print.thres2 <- function(x, ...){
     cat("\nEstimate:")
     cat("\n  Threshold: ", x$T$thres)
     cat("\n  Minimum Cost: ", x$T$cost)
-    cat("\n")
-    cat("\nConfidence intervals (bootstrap):")
-    cat("\n  CI based on normal distribution:", x$CI$low.norm, " - ", x$CI$up.norm)
-    cat("\n  CI based on percentiles:", x$CI$low.perc, " - ", x$CI$up.perc)
-    cat("\n  Bootstrap resamples:", x$CI$B)
+    if (!is.null(x$CI)){
+      cat("\n")
+      cat("\nConfidence intervals (bootstrap):")
+      cat("\n  CI based on normal distribution:", x$CI$low.norm, " - ", x$CI$up.norm)
+      cat("\n  CI based on percentiles:", x$CI$low.perc, " - ", x$CI$up.perc)
+      cat("\n  Bootstrap resamples:", x$CI$B)
+    }
     cat("\n")
     cat("\nParameters used:")
     cat("\n  Disease prevalence:", x$T$prev)
     cat("\n  Costs (Ctp, Cfp, Ctn, Cfn):", x$T$costs)
     cat("\n  R:", x$T$R)
     cat("\n  Method:", x$T$method)
-    cat("\n  Significance Level:", x$CI$alpha)
+    if (!is.null(x$CI)){
+      cat("\n  Significance Level:", x$CI$alpha)
+    }
     cat("\n")
   }
   if (x$T$method == "equal" | x$T$method == "unequal"){
     cat("\nEstimate:")
     cat("\n  Threshold: ", x$T$thres)
     cat("\n")
-    if(x$CI$ci.method == "delta"){
-      cat("\nConfidence interval (delta method):")
-      cat("\n  Lower Limit:", x$CI$lower)
-      cat("\n  Upper Limit:", x$CI$upper)
-      cat("\n")
+    if (!is.null(x$CI)){
+      if(x$CI$ci.method == "delta"){
+        cat("\nConfidence interval (delta method):")
+        cat("\n  Lower Limit:", x$CI$lower)
+        cat("\n  Upper Limit:", x$CI$upper)
+        cat("\n")
+      }
+      if(x$CI$ci.method == "boot"){
+        cat("\nConfidence intervals (bootstrap):")
+        cat("\n  CI based on normal distribution: ", x$CI$low.norm, " - ", x$CI$up.norm)
+        cat("\n  CI based on percentiles: ", x$CI$low.perc, " - ", x$CI$up.perc)
+        cat("\n  Bootstrap resamples: ", x$CI$B)
+        cat("\n")
+      }
     }
-    if(x$CI$ci.method == "boot"){
-      cat("\nConfidence intervals (bootstrap):")
-      cat("\n  CI based on normal distribution: ", x$CI$low.norm, " - ", x$CI$up.norm)
-      cat("\n  CI based on percentiles: ", x$CI$low.perc, " - ", x$CI$up.perc)
-      cat("\n  Bootstrap resamples: ", x$CI$B)
-      cat("\n")
-    }    
     cat("\nParameters used:")
     cat("\n  Disease prevalence:", x$T$prev)
     cat("\n  Costs (Ctp, Cfp, Ctn, Cfn):", x$T$costs)
     cat("\n  R:", x$T$R)
     cat("\n  Method:", x$T$method)
-    cat("\n  Significance Level: ", x$CI$alpha)
+    if (!is.null(x$CI)){
+      cat("\n  Significance Level: ", x$CI$alpha)
+    }
     cat("\n")
   }
 }
@@ -506,6 +518,7 @@ getParams <- function(k, dist){
 #####            dist1, dist2: distribution to be assumed for healthy and disease populations,
 #####            respectively. Ignored when method!="parametric".
 #####            Default, "equal". The user can specify just the initial letters.
+#####            ci=compute confidence interval? default, TRUE.
 #####            ci.method=method to be used for the confidence intervals computation. The user can
 #####            choose between:
 #####              "delta": delta method is used to estimate the threshold standard error
@@ -521,7 +534,7 @@ getParams <- function(k, dist){
 #####            be stripped before the computation proceeds. Default, FALSE.
 ##### value: the threshold estimated
 ##########################################################################
-thres2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE), method=c("equal", "unequal", "empirical", "parametric"), dist1=NULL, dist2=NULL, ci.method=c("delta", "boot"), B=1000, alpha=0.05, extra.info=FALSE, na.rm=FALSE){
+thres2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE), method=c("equal", "unequal", "empirical", "parametric"), dist1=NULL, dist2=NULL, ci=TRUE, ci.method=c("delta", "boot"), B=1000, alpha=0.05, extra.info=FALSE, na.rm=FALSE){
   # error handling
   if (!(rho > 0 & rho < 1)){
     stop("The disease prevalence rho must be a number in (0,1)")
@@ -545,32 +558,44 @@ thres2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byro
   ci.method <- match.arg(ci.method)
   if (method=="equal"){
     T <- thresEq2(k1, k2, rho, costs)
-    if (ci.method=="delta"){
-      ci <- icDeltaEq2(k1, k2, rho, costs, T$thres, a=alpha)
-    }
-    if (ci.method=="boot"){
-      ci <- icBootEq2(k1, k2, rho, costs, T$thres, B=B, a=alpha)
+    if (ci){
+      if (ci.method=="delta"){
+        CI <- icDeltaEq2(k1, k2, rho, costs, T$thres, a=alpha)
+      }
+      if (ci.method=="boot"){
+        CI <- icBootEq2(k1, k2, rho, costs, T$thres, B=B, a=alpha)
+      }
+    }else{
+      CI <- NULL
     }
   }
   if (method=="unequal"){
     T <- thresUn2(k1, k2, rho, costs)
-    if (ci.method=="delta"){
-      ci <- icDeltaUn2(k1, k2, rho, costs, T$thres, a=alpha)
-    }
-    if (ci.method=="boot"){
-      ci <- icBootUn2(k1, k2, rho, costs, T$thres, B=B, a=alpha)
+    if (ci){
+      if (ci.method=="delta"){
+        CI <- icDeltaUn2(k1, k2, rho, costs, T$thres, a=alpha)
+      }
+      if (ci.method=="boot"){
+        CI <- icBootUn2(k1, k2, rho, costs, T$thres, B=B, a=alpha)
+      }
+    }else{
+      CI <- NULL
     }
   }
   if (method=="empirical"){
-    if (ci.method=="delta"){
+    if (ci.method=="delta" & ci){
       stop("When method='empirical', CIs cannot be computed based on delta method (choose ci.method='boot')")
     }
     T <- thresEmp2(k1, k2, rho, costs, extra.info)
-    ci <- icEmp2(k1, k2, rho, costs, T$thres, B=B, a=alpha)
+    if (ci){
+      CI <- icEmp2(k1, k2, rho, costs, T$thres, B=B, a=alpha)
+    }else{
+      CI <- NULL
+    }
   }
   if (method=="parametric"){
     # error handling
-    if (ci.method=="delta"){
+    if (ci.method=="delta" & ci){
       stop("When method='parametric', CIs cannot be computed based on delta method (choose ci.method='boot')")
     }
     if (is.null(dist1) | is.null(dist2)){
@@ -602,9 +627,13 @@ thres2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byro
     T$pars1 <- pars1
     T$pars2 <- pars2
     # confidence interval by parametric bootstrap
-    ci <- icBootTH(dist1, dist2, pars1[1], pars1[2], pars2[1], pars2[2], length(k1), length(k2), rho, costs, T$thres, B=B, a=alpha)
+    if (ci){
+      CI <- icBootTH(dist1, dist2, pars1[1], pars1[2], pars2[1], pars2[2], length(k1), length(k2), rho, costs, T$thres, B=B, a=alpha)
+    }else{
+      CI <- NULL
+    }
   }
-  out <- list(T=T, CI=ci)
+  out <- list(T=T, CI=CI)
   class(out) <- "thres2"
   return(out)
 }
@@ -873,7 +902,7 @@ icDeltaUn2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, 
 ##### arguments:  k1=vector containing the healthy sample values 
 #####		   	      k2=vector containing the diseased sample values 
 #####		   	      B=number of bootstrap resamples
-##### value: two-object list [[1]]:healthy resample matrix, [[2]]:diseased resample matrix
+##### value: two-object list [[1]]: healthy resample matrix, [[2]]: diseased resample matrix
 ################################################################################
 resample2 <- function(k1, k2, B){
   n1 <- length(k1)
@@ -910,7 +939,7 @@ icBootEq2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, b
     g <- k1; k1 <- k2; k2 <- g
   }
   # resamples
-  t <- resample2(k1,k2,B)
+  t <- resample2(k1, k2, B)
   t0 <- t[[1]]
   t1 <- t[[2]]
   
@@ -951,7 +980,7 @@ icBootUn2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, b
     g <- k1; k1 <- k2; k2 <- g
   }
   
-  t <- resample2(k1,k2,B)
+  t <- resample2(k1, k2, B)
   t0 <- t[[1]]
   t1 <- t[[2]]
   
@@ -996,7 +1025,7 @@ icEmp2 <- function(k1,k2,rho,costs=matrix(c(0,0,1,(1-rho)/rho),2,2, byrow=TRUE),
     g <- k1; k1 <- k2; k2 <- g
   }
   
-  t <- resample2(k1,k2,B)
+  t <- resample2(k1, k2, B)
   t0 <- t[[1]]
   t1 <- t[[2]]
   
@@ -1347,7 +1376,7 @@ plot.thres2 <- function(x, bw=c("nrd0", "nrd0"), ci=TRUE, which.boot=c("norm", "
   # thres
   abline(v=x$T$thres, col=col[3], lty=lty[3], lwd=lwd[3])
   # CI
-  if(ci){
+  if(ci & !is.null(x$CI)){
     if (x$CI$ci.method != "boot"){
       abline(v=c(x$CI$lower, x$CI$upper), col=col[3], lty=lty[4], lwd=lwd[3])
     }else{
@@ -1356,7 +1385,7 @@ plot.thres2 <- function(x, bw=c("nrd0", "nrd0"), ci=TRUE, which.boot=c("norm", "
   }  
   # legend
   if (legend){
-    legend(leg.pos, c(expression(bar(D)), "D", ifelse(ci, "Thres+CI", "Thres")), col=col, lty=lty, lwd=lwd, cex=leg.cex)
+    legend(leg.pos, c(expression(bar(D)), "D", ifelse(ci & !is.null(x$CI), "Thres+CI", "Thres")), col=col, lty=lty, lwd=lwd, cex=leg.cex)
   }
 }
 
@@ -1387,7 +1416,7 @@ lines.thres2 <- function(x, ci=TRUE, which.boot=c("norm", "perc"), col=1, lty=c(
   # thres
   abline(v=x$T$thres, col=col, lty=lty[1], lwd=lwd)
   # CI
-  if(ci){
+  if(ci & !is.null(x$CI)){
     if (x$CI$ci.method != "boot"){
       abline(v=c(x$CI$lower, x$CI$upper), col=col, lty=lty[2], lwd=lwd, ...)
     }else{

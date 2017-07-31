@@ -512,6 +512,7 @@ icParam3 <- function(k1, k2, k3, rho, costs=matrix(c(0, 1, 1, rho[1]/rho[2], 0, 
 #####            respectively. They can be chosen between the following 2-parameter distributions:
 #####              "beta", "cauchy", "chisq" (chi-squared), "gamma", "lnorm" (lognormal),
 #####              "logis" (logistic), "norm" (normal) and "weibull".
+#####            ci=should CIs be calculated=Default, TRUE.
 #####            ci.method=method to be used for the confidence intervals computation. The user can
 #####            choose between:
 #####              "param": parametric CIs are computed when assuming a trinormal underlying model.
@@ -524,7 +525,7 @@ icParam3 <- function(k1, k2, k3, rho, costs=matrix(c(0, 1, 1, rho[1]/rho[2], 0, 
 #####            be stripped before the computation proceeds. Default, F.
 ##### value: the thresholds estimated
 #######################################
-thres3 <- function(k1, k2, k3, rho, costs=matrix(c(0, 1, 1, rho[1]/rho[2],0,rho[3]/rho[2], 1, 1, 0), 3, 3, byrow=TRUE), dist1="norm", dist2="norm", dist3="norm", start=NULL, ci.method=c("param", "boot"), B=1000, alpha=0.05, na.rm=FALSE){
+thres3 <- function(k1, k2, k3, rho, costs=matrix(c(0, 1, 1, rho[1]/rho[2],0,rho[3]/rho[2], 1, 1, 0), 3, 3, byrow=TRUE), dist1="norm", dist2="norm", dist3="norm", start=NULL, ci=TRUE, ci.method=c("param", "boot"), B=1000, alpha=0.05, na.rm=FALSE){
   # error handling
   if (sum(rho > 0 & rho < 1) != 3){
     stop("The prevalences must be in (0,1)")
@@ -560,14 +561,18 @@ thres3 <- function(k1, k2, k3, rho, costs=matrix(c(0, 1, 1, rho[1]/rho[2],0,rho[
     T$dist1 <- dist1
     T$dist2 <- dist2
     T$dist3 <- dist3
-    if (ci.method=="param"){
-      ci <- icParam3(k1, k2, k3, rho, costs, c(T$thres1, T$thres2), a=alpha)
-    }
-    if (ci.method=="boot"){
-      ci <- icBoot3(k1, k2, k3, rho, costs, c(T$thres1, T$thres2), B=B, a=alpha, start)
+    if (ci){
+      if (ci.method=="param"){
+        CI <- icParam3(k1, k2, k3, rho, costs, c(T$thres1, T$thres2), a=alpha)
+      }
+      if (ci.method=="boot"){
+        CI <- icBoot3(k1, k2, k3, rho, costs, c(T$thres1, T$thres2), B=B, a=alpha, start)
+      }
+    }else{
+      CI <- NULL
     }
   }else{
-    if (ci.method=="param"){
+    if (ci.method=="param" & ci){
       stop("When not all the distributions are 'norm', parametric CIs cannot be computed (choose ci.method='boot')")
     }
     if (!(dist1 %in% c("beta", "cauchy", "chisq", "gamma", "lnorm", "logis", "nbinom", "norm", "weibull"))){
@@ -600,9 +605,13 @@ thres3 <- function(k1, k2, k3, rho, costs=matrix(c(0, 1, 1, rho[1]/rho[2],0,rho[
     T$pars2 <- pars2
     T$pars3 <- pars3
     # confidence interval by parametric bootstrap
-    ci <- icBootTH3(dist1, dist2, dist3, pars1[1], pars1[2], pars2[1], pars2[2], pars3[1], pars3[2], length(k1), length(k2), length(k3), rho, costs, c(T$thres1, T$thres2), B, alpha)
+    if (ci){
+      CI <- icBootTH3(dist1, dist2, dist3, pars1[1], pars1[2], pars2[1], pars2[2], pars3[1], pars3[2], length(k1), length(k2), length(k3), rho, costs, c(T$thres1, T$thres2), B, alpha)
+    }else{
+      CI <- NULL
+    }
   }  
-  out <- list(T=T, CI=ci)
+  out <- list(T=T, CI=CI)
   class(out) <- "thres3"
   return(out)
 }
@@ -618,53 +627,61 @@ print.thres3 <- function(x, ...){
     cat("\n  Threshold 1: ", x$T$thres1)
     cat("\n  Threshold 2: ", x$T$thres2)
     cat("\n")
-    if(x$CI$ci.method == "param"){
-      cat("\nConfidence interval Threshold 1:")
-      cat("\n  Lower Limit:", x$CI$lower1)
-      cat("\n  Upper Limit:", x$CI$upper1)
-      cat("\n")
-      cat("\nConfidence interval Threshold 2:")
-      cat("\n  Lower Limit:", x$CI$lower2)
-      cat("\n  Upper Limit:", x$CI$upper2)
-      cat("\n")
+    if (!is.null(x$CI)){
+      if(x$CI$ci.method == "param"){
+        cat("\nConfidence interval Threshold 1:")
+        cat("\n  Lower Limit:", x$CI$lower1)
+        cat("\n  Upper Limit:", x$CI$upper1)
+        cat("\n")
+        cat("\nConfidence interval Threshold 2:")
+        cat("\n  Lower Limit:", x$CI$lower2)
+        cat("\n  Upper Limit:", x$CI$upper2)
+        cat("\n")
+      }
+      if(x$CI$ci.method == "boot"){
+        cat("\nConfidence intervals (bootstrap):")
+        cat("\n  CI based on normal distribution for Threshold 1: ", x$CI$low.norm1, " - ", x$CI$up.norm1)
+        cat("\n  CI based on percentiles for Threshold 1: ", x$CI$low.perc1, " - ", x$CI$up.perc1)
+        cat("\n  CI based on normal distribution for Threshold 2: ", x$CI$low.norm2, " - ", x$CI$up.norm2)
+        cat("\n  CI based on percentiles for Threshold 2: ", x$CI$low.perc2, " - ", x$CI$up.perc2)
+        cat("\n  Bootstrap resamples: ", x$CI$B)
+        cat("\n")
+      }
     }
-    if(x$CI$ci.method == "boot"){
-      cat("\nConfidence intervals (bootstrap):")
-      cat("\n  CI based on normal distribution for Threshold 1: ", x$CI$low.norm1, " - ", x$CI$up.norm1)
-      cat("\n  CI based on percentiles for Threshold 1: ", x$CI$low.perc1, " - ", x$CI$up.perc1)
-      cat("\n  CI based on normal distribution for Threshold 2: ", x$CI$low.norm2, " - ", x$CI$up.norm2)
-      cat("\n  CI based on percentiles for Threshold 2: ", x$CI$low.perc2, " - ", x$CI$up.perc2)
-      cat("\n  Bootstrap resamples: ", x$CI$B)
-      cat("\n")
-    }    
     cat("\nParameters used:")
     cat("\n  Prevalences:", x$T$prev)
     cat("\n  Costs")
     cat("\n    C11,C12,C13:", x$T$costs[1,])
     cat("\n    C21,C22,C23:", x$T$costs[2,])
     cat("\n    C31,C32,C33:", x$T$costs[3,])
-    cat("\n  Significance Level: ", x$CI$alpha)
+    if (!is.null(x$CI)){
+      cat("\n  Significance Level: ", x$CI$alpha)
+    }
     cat("\n")
 
   }else{
     cat("\nEstimate:")
     cat("\n  Threshold 1: ", x$T$thres1)
     cat("\n  Threshold 2: ", x$T$thres2)
-    cat("\n")
-    cat("\nConfidence intervals (parametric bootstrap):")
+    if (!is.null(x$CI)){
+      cat("\n")
+      cat("\nConfidence intervals (parametric bootstrap):")
       cat("\n  CI based on normal distribution for Threshold 1: ", x$CI$low.norm1, " - ", x$CI$up.norm1)
       cat("\n  CI based on percentiles for Threshold 1: ", x$CI$low.perc1, " - ", x$CI$up.perc1)
       cat("\n  CI based on normal distribution for Threshold 2: ", x$CI$low.norm2, " - ", x$CI$up.norm2)
       cat("\n  CI based on percentiles for Threshold 2: ", x$CI$low.perc2, " - ", x$CI$up.perc2)
       cat("\n  Bootstrap resamples: ", x$CI$B)
-      cat("\n")
+    }
+    cat("\n")
     cat("\nParameters used:")
     cat("\n  Prevalences:", x$T$prev)
     cat("\n  Costs")
     cat("\n    C11,C12,C13:", x$T$costs[1,])
     cat("\n    C21,C22,C23:", x$T$costs[2,])
     cat("\n    C31,C32,C33:", x$T$costs[3,])
-    cat("\n  Confidence Level: ", x$CI$alpha)
+    if (!is.null(x$CI)){
+      cat("\n  Confidence Level: ", x$CI$alpha)
+    }
     cat("\n  Distribution assumed for the first sample: ", x$T$dist1, "(", round(x$T$pars1[1], 2), ", ", round(x$T$pars1[2], 2), ")", sep="")
     cat("\n  Distribution assumed for the second sample: ", x$T$dist2, "(", round(x$T$pars2[1], 2), ", ", round(x$T$pars2[2], 2), ")", sep="")
     cat("\n  Distribution assumed for the third sample: ", x$T$dist3, "(", round(x$T$pars3[1], 2), ", ", round(x$T$pars3[2], 2), ")", sep="") 
@@ -861,7 +878,7 @@ plot.thres3 <- function(x, bw=c("nrd0", "nrd0", "nrd0"), ci=TRUE, which.boot=c("
   abline(v=x$T$thres1, col=col[4], lty=lty[4], lwd=lwd[4])
   abline(v=x$T$thres2, col=col[4], lty=lty[4], lwd=lwd[4])
   # CI
-  if(ci){
+  if(ci & !is.null(x$CI)){
     if (x$CI$ci.method != "boot"){
       abline(v=c(x$CI$lower1, x$CI$upper1), col=col[4], lty=lty[5], lwd=lwd[4])
       abline(v=c(x$CI$lower2, x$CI$upper2), col=col[4], lty=lty[5], lwd=lwd[4])
@@ -872,7 +889,7 @@ plot.thres3 <- function(x, bw=c("nrd0", "nrd0", "nrd0"), ci=TRUE, which.boot=c("
   }  
   # legend
   if (legend){
-    legend(leg.pos, c("1st sample", "2nd sample", "3rd sample", ifelse(ci, "Thres+CI", "Thres")), col=col, lty=lty, lwd=lwd, cex=leg.cex)
+    legend(leg.pos, c("1st sample", "2nd sample", "3rd sample", ifelse(ci & !is.null(x$CI), "Thres+CI", "Thres")), col=col, lty=lty, lwd=lwd, cex=leg.cex)
   }
 }
 
@@ -904,7 +921,7 @@ lines.thres3 <- function(x, ci=TRUE, which.boot=c("norm", "perc"), col=1, lty=c(
   abline(v=x$T$thres1, col=col, lty=lty[1], lwd=lwd)
   abline(v=x$T$thres2, col=col, lty=lty[1], lwd=lwd)
   # CI
-  if(ci){
+  if(ci & !is.null(x$CI)){
     if (x$CI$ci.method != "boot"){
       abline(v=c(x$CI$lower1, x$CI$upper1), col=col, lty=lty[2], lwd=lwd)
       abline(v=c(x$CI$lower2, x$CI$upper2), col=col, lty=lty[2], lwd=lwd)

@@ -26,6 +26,8 @@ Maintainer: Sara Perez-Jaume <spjaume@gmail.com>
 \references{
 Efron B, Tibshirani RJ. (1993). An introduction to the bootstrap, Chapman & Hall.
 
+Perez-Jaume S, Skaltsa K, Pallares N, Carrasco JL. (2016). ThresholdROC: Optimum Threshold Estimation Tools for Continuous Diagnostic Tests in R. Journal of Statistical Software (in press).
+
 Skaltsa K, Jover L, Carrasco JL. (2010). Estimation of the diagnostic threshold accounting for decision costs and sampling uncertainty. Biometrical Journal 52(5):676-697.
 
 Skaltsa K, Jover L, Fuster D, Carrasco JL. (2012). Optimum threshold estimation based on cost function in a multistate diagnostic setting. Statistics in Medicine, 31:1098-1109.

@@ -11,7 +11,7 @@ This function computes the threshold estimates and their corresponding confidenc
 thres3(k1, k2, k3, rho,
   costs = matrix(c(0, 1, 1, rho[1]/rho[2], 0, rho[3]/rho[2], 1, 1, 0),
   3, 3, byrow = TRUE), dist1 = "norm", dist2 = "norm",
-  dist3 = "norm", start = NULL, ci.method = c("param", "boot"),
+  dist3 = "norm", start = NULL, ci = TRUE, ci.method = c("param", "boot"),
   B = 1000, alpha = 0.05, na.rm = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -43,8 +43,11 @@ distribution to be assumed for the third population. Default, \code{"norm"}. See
   \item{start}{
 when the three distributions \code{dist1}, \code{dist2} and \code{dist3} are \code{"norm"}, a 2-dimensional vector containing starting values for the thresholds. The authors recommend to use the mean of the distribution with lower values and the mean of the distribution with higher values. If any distribution is not \code{"norm"}, this parameter is ignored. See \bold{Details}. 
 }
+  \item{ci}{
+  should a confidence interval be calculated? Default, \code{TRUE}. The user can set it to \code{FALSE} to supress the calculation of any confidence interval (in that case, arguments \code{ci.method}, \code{B} and \code{alpha} are ignored).
+}
   \item{ci.method}{
-method to be used for the confidence intervals computation. The user can specify just the initial letters. Default, \code{"param"}. See \bold{Details}.
+method to be used for the confidence intervals calculation. The user can specify just the initial letters. Default, \code{"param"}. See \bold{Details}.
 }
   \item{B}{
 number of bootstrap resamples when \code{ci.method = "boot"}. Otherwise, ignored. Default, 1000.
@@ -133,7 +136,9 @@ An object of class \code{thres3}, which is a list with two components:
   
   \code{B}  number of bootstrap resamples.
   
-  \code{ci.method}  method used for the confidence intervals computation.
+  \code{ci.method}  method used for the confidence intervals calculation.
+  
+  When \code{ci = FALSE}, \code{NULL}.
   }
 
 }
@@ -165,7 +170,10 @@ start <- c(mean(k1), mean(k3))
 thres3(k1, k2, k3, rho, dist1="norm", dist2="norm", dist3="norm", start=start, ci.method="param") 
 
 # not assuming trinormality
-thres3(k1, k2, k3, rho, B=1000, ci.method="boot", dist1="lnorm", dist2="norm", dist3="norm") 
+thres3(k1, k2, k3, rho, B=1000, ci.method="boot", dist1="lnorm", dist2="norm", dist3="norm")
+
+# supress confidence intervals calculation
+thres3(k1, k2, k3, rho, ci=FALSE, dist1="lnorm", dist2="norm", dist3="norm")
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
