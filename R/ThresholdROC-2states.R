@@ -330,27 +330,29 @@ thresEmp2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, b
   n1 <- length(k1)
   n2 <- length(k2)
   n <- n1+n2
-  v <- c(k1,k2)
-  ind.origin <- c(rep(0,n1), rep(1,n2))
-  vi <- cbind(v,ind.origin)
-  ord.v <- vi[order(vi[, 1], vi[, 2]), 1:2]
+  v <- c(k1, k2)
+  ind.origin <- c(rep(0, n1), rep(1, n2))
+  vi <- cbind(v, ind.origin)
+  ord.v <- vi[order(vi[, 1], vi[, 2]), ]
   sens <- rep(NA, n)
-  spec.c <- rep(NA, n) 
-  # sensitivity and 1-specificity for each observation
-  for(j in 1:n){
-    sens[j] <- (sum(ord.v[(j:n), 2]))/n2 # Sens
-    spec.c[j] <- ((n + 1 - j) - sum(ord.v[(j:n), 2]))/n1 # 1 - Spec
+  spec <- rep(NA, n)
+  
+  # sensitivity and specificity for each observation
+  for (j in 1:n){
+    cut <- ord.v[j, 1]
+    sens[j] <- sum(ord.v[, 1]>=cut & ord.v[, 2]==1)/n2
+    spec[j] <- sum(ord.v[, 1]<cut & ord.v[, 2]==0)/n1
   }
+  
   # cost for each observation
-  cost.non.par <- n*(c.t.pos*sens*rho + c.f.neg*(1-sens)*rho + c.f.pos*spec.c*(1-rho) + c.t.neg*(1-spec.c)*(1-rho))
+  D <- n*rho*(c.t.pos-c.f.neg)
+  R <- ((1-rho)/rho)*((c.t.neg-c.f.pos)/(c.t.pos-c.f.neg))
+  G <- (rho*c.f.neg+(1-rho)*c.f.pos)/(rho*(c.t.pos-c.f.neg))
+  cost.non.par <- D*(sens+spec*R+G)
+  
   # together
-  total <- data.frame(ord.v, cost.non.par, sens, 1-spec.c)
-  colnames(total)[5] <- "spec"
-  # search and remove repeated observations
-  which.duplicated <- which(duplicated(total[, "v"]))
-  if (length(which.duplicated) > 0){
-    total <- total[-which.duplicated, ]
-  } 
+  total <- data.frame(ord.v, cost.non.par, sens, spec)
+
   # minimum cost
   ind.min.cost <- which(total[, "cost.non.par"]==min(total[, "cost.non.par"]))
   sens.min <- total[ind.min.cost, "sens"]
@@ -360,25 +362,27 @@ thresEmp2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, b
   # if there are two observations that lead to the same cost...
   howmany <- length(cut.min)
   if (howmany>1){
-    interval <- subset(total, v >= cut.min[1] & v<= cut.min[length(cut.min)])
+    interval <- subset(total, v >= cut.min[1] & v <= cut.min[length(cut.min)])
     cut.min <- mean(interval$v)
     # sens, spec
-    sens.min <- (sum(vi[, "v"]>cut.min & vi[, "ind.origin"]==1))/n2
-    spec.min <- (sum(vi[, "v"]<cut.min & vi[, "ind.origin"]==0))/n1
+    sens.min <- sum(ord.v[, 1]>=cut.min & ord.v[, 2]==1)/n2
+    spec.min <- sum(ord.v[, 1]<cut.min & ord.v[, 2]==0)/n1
     # cost
-    cost.min <- n*(c.t.pos*sens.min*rho + c.f.neg*(1-sens.min)*rho + c.f.pos*(1-spec.min)*(1-rho) + c.t.neg*(spec.min)*(1-rho))
+    cost.min <- D*(sens.min+spec.min*R+G)
     warning(paste(howmany, "observations lead to the minimum cost. The mean of the values between them is returned as threshold."), call.=FALSE)
   }
   
   # slope
   beta <- slope(rho, costs)
+  
   # results
   re <- list(thres=cut.min, sens=sens.min, spec=spec.min, cost=cost.min, costs=costs.origin, R=beta, prev=rho.origin, method="empirical", k1=k1.origin, k2=k2.origin)
+  
   # for plotCostROC if extra.info is TRUE
   if (extra.info){
     re$tot.thres <- total[, "v"]
     re$tot.cost <- total[, "cost.non.par"]
-    re$tot.spec.c <- spec.c
+    re$tot.spec <- spec
     re$tot.sens <- sens
   }
   return(re)
@@ -1135,7 +1139,7 @@ plotCostROC <- function(x, type="l", ...){
       points(x$T$thres, x$T$cost, col=2, pch=19)
       par(ask=T)
       # plot 2: empirical ROC curve
-      plot(x$T$tot.spec.c,x$T$tot.sens, main="Empirical ROC curve", xlab="1-Specificity", ylab="Sensitivity", type=type, ...)
+      plot(1-x$T$tot.spec,x$T$tot.sens, main="Empirical ROC curve", xlab="1-Specificity", ylab="Sensitivity", type=type, ...)
       points(1-x$T$spec, x$T$sens, col=2, pch=19)
       par(ask=F)
     }

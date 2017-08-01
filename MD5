@@ -1,13 +1,13 @@
-d0f31f8bd9736af1e264d3f4e7e0dd23 *DESCRIPTION
+fe681c03ca3c5e3e89e9ce24e18de049 *DESCRIPTION
 da5b3de90fa3b91d06c156c2980773f1 *NAMESPACE
-3c4f65c131ee474e8e7cf12d0efbb44a *R/ThresholdROC-2states.R
+25b5c3b52aad97f47280e47d682e9df0 *R/ThresholdROC-2states.R
 436b2dadbde6a369e87140009789a532 *R/ThresholdROC-3states.R
 88cd6e6aaf9d8f927e4ceaa18ec17147 *R/diagnostic.R
 316b4fb9cfc0c0bc30070bc5aab752dc *data/AD.txt.gz
 ba7d735751b8f1a6927c5474c121161f *data/chemo.txt.gz
 6bd7464e5169cddf0f3f7acab5df36f9 *man/AD.Rd
 750d928f2a05ad26b9fbdfa14ad66600 *man/SS.Rd
-f7e99cad589a1645063c1d37bea449e2 *man/ThresholdROC-package.Rd
+4504d240c50c8a65c311fda08251a3a1 *man/ThresholdROC-package.Rd
 77524ca7d871d277035ae923d7c6399a *man/chemo.Rd
 1bce9370d5cea1d199ab8a5030a015cb *man/diagnostic.Rd
 cf964a644464925aecbc47fcb6ca4dd3 *man/lines-thres2.Rd
