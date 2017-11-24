@@ -12,11 +12,11 @@ The ThresholdROC package provides point and interval estimations of the optimum 
 \tabular{ll}{
 Package: \tab ThresholdROC\cr
 Type: \tab Package\cr
-Version: \tab 2.5\cr
-Date: \tab 2017-08-01\cr
+Version: \tab 2.6\cr
+Date: \tab 2017-11-24\cr
 License: \tab GPL (>= 2)\cr
 }
-The most important functions are \code{thres2} and \code{thres3}. They offer a wide range of options for threshold estimation and inference in two and three state settings. We also include the function \code{diagnostic}, which perfoms diagnostic tests in 2x2 tables.
+The most important functions are \code{thres2} and \code{thres3}. They offer a wide range of options for threshold estimation and inference in two and three state settings. We also include the function \code{diagnostic}, which calculates common measures of the accuracy of diagnostic tests involving 2x2 contingency tables of classification results.
 }
 \author{
 Sara Perez-Jaume, Natalia Pallares, Konstantina Skaltsa
@@ -26,7 +26,7 @@ Maintainer: Sara Perez-Jaume <spjaume@gmail.com>
 \references{
 Efron B, Tibshirani RJ. (1993). An introduction to the bootstrap, Chapman & Hall.
 
-Perez-Jaume S, Skaltsa K, Pallares N, Carrasco JL. (2016). ThresholdROC: Optimum Threshold Estimation Tools for Continuous Diagnostic Tests in R. Journal of Statistical Software (in press).
+Perez-Jaume S, Skaltsa K, Pallares N, Carrasco JL. (2017). ThresholdROC: Optimum Threshold Estimation Tools for Continuous Diagnostic Tests in R. Journal of Statistical Software 82(4):1-21. doi: 10.18637/jss.v082.i04.
 
 Skaltsa K, Jover L, Carrasco JL. (2010). Estimation of the diagnostic threshold accounting for decision costs and sampling uncertainty. Biometrical Journal 52(5):676-697.
 

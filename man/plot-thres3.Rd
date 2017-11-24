@@ -23,7 +23,7 @@ an object of class \code{thres3}.
 vector containing the bandwith for the first sample in the first position, the bandwith for the second sample in the second position and the bandwith for the third sample in the third position (to be passed to \code{density()}). Default, \code{c("nrd0", "nrd0", "nrd0")}.
 }
   \item{ci}{
-should the confidence intervals be plotted? Default, \code{TRUE}. No confidence intervals will be plotted if \code{x} does not contain one (that is, \code{x} is \code{NULL}).
+should the confidence intervals be plotted? Default, \code{TRUE}. No confidence intervals will be plotted if \code{x} does not contain one (that is, \code{x$CI} is \code{NULL}).
 }
   \item{which.boot}{
 in case \code{x} contains confidence intervals computed by bootstrapping, which one should be printed? The user can choose between \code{"norm"} (based on normal distribution) or \code{"perc"} (based on percentiles). Default, \code{"norm"}. This argument is ignored if parametric confidence intervals were computed. 

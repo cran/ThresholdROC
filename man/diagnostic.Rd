@@ -69,7 +69,7 @@ Sara Perez-Jaume, Natalia Pallares
 }
 \examples{
 # example 1 (Zhou et al (2002))
-japan <- matrix(c(56,23,6,78), ncol=2, byrow=TRUE)
+japan <- matrix(c(56, 23, 6, 78), ncol=2, byrow=TRUE)
 colnames(japan) <- c("D","nD")
 rownames(japan) <- c("+","-")
 japan
@@ -77,7 +77,7 @@ p <- 0.196 # disease prevalence
 diagnostic(japan, "par", casecontrol=TRUE, p=p)
 
 # example 2
-table <- matrix(c(22,2,3,3), ncol=2, byrow=TRUE)
+table <- matrix(c(22, 2, 3, 3), ncol=2, byrow=TRUE)
 diagnostic(table, "par")
 diagnostic(table, "exact")
 

@@ -1035,6 +1035,7 @@ icEmp2 <- function(k1,k2,rho,costs=matrix(c(0,0,1,(1-rho)/rho),2,2, byrow=TRUE),
   
   cut <- rep(NA,B)	
   cut <- suppressWarnings(sapply(1:B,function(j){thresEmp2(t0[,j],t1[,j],rho,costs)[[1]]}))
+
   est.se <- sd(cut)
   
   ###### 1) NORMAL-BOOTSTRAP SE

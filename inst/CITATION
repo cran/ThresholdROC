@@ -1,0 +1,22 @@
+bibentry(bibtype = "Article",
+  title        = "{ThresholdROC}: Optimum Threshold Estimation Tools for Continuous Diagnostic Tests in {R}",
+  author       = c(person(given = "Sara",
+                          family = "Perez-Jaume",
+			  email = "sperezj@fsjd.org"),
+                   person(given = "Konstantina",
+                          family = "Skaltsa"),
+                   person(given = "Nat{\\`a}lia",
+                          family = "Pallar{\\`e}s",
+                          email = "npallares@imim.es"),
+                   person(given = c("Josep", "L."),
+                          family = "Carrasco")),
+  journal      = "Journal of Statistical Software",
+  year         = "2017",
+  volume       = "82",
+  number       = "4",
+  pages        = "1--21",
+  doi          = "10.18637/jss.v082.i04",
+
+  header       = "To cite ThresholdROC in publications use:"
+)
+
