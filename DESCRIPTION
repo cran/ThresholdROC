@@ -1,16 +1,16 @@
 Package: ThresholdROC
 Type: Package
-Title: Threshold Estimation
-Version: 2.6
-Date: 2017-11-24
+Title: Optimum Threshold Estimation
+Version: 2.7
+Date: 2019-02-26
 Author: Sara Perez-Jaume, Natalia Pallares, Konstantina Skaltsa
 Maintainer: Sara Perez-Jaume <spjaume@gmail.com>
-Description: Point and interval estimations of optimum thresholds for continuous diagnostic tests (two- and three- state settings).
+Description: Functions that provide point and interval estimations of optimum thresholds for continuous diagnostic tests. The methodology used is based on minimizing an overall cost function in the two- and three-state settings. The package also provides functions for sample size determination and estimation of diagnostic accuracy measures. It also includes graphical tools.
 License: GPL (>= 2)
 Depends: R (>= 3.1.0)
 Imports: MASS, numDeriv, pROC
 LazyData: TRUE
 NeedsCompilation: no
-Packaged: 2017-11-24 21:38:58 UTC; Sara
+Packaged: 2019-02-26 09:55:58 UTC; sperezj
 Repository: CRAN
-Date/Publication: 2017-11-24 23:35:16 UTC
+Date/Publication: 2019-02-26 11:40:03 UTC

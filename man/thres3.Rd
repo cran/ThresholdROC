@@ -5,7 +5,7 @@
 Threshold point estimation and confidence intervals (three-state setting)
 }
 \description{
-This function computes the threshold estimates and their corresponding confidence intervals in a three-state setting.
+This function calculates the threshold estimates and their corresponding confidence intervals in a three-state setting.
 }
 \usage{
 thres3(k1, k2, k3, rho,
@@ -62,7 +62,7 @@ a logical value indicating whether \code{NA} values in \code{k1}, \code{k2} and 
 \details{
 Parameters \code{dist1}, \code{dist2} and \code{dist3} can be chosen between the following 2-parameter distributions: \code{"beta"}, \code{"cauchy"}, \code{"chisq"} (chi-squared), \code{"gamma"}, \code{"lnorm"} (lognormal), \code{"logis"} (logistic), \code{"norm"} (normal) and \code{"weibull"}.
 
-For parameter \code{ci.method} the user can choose between \code{"param"} (parametric confidence intervals are computed when assuming a trinormal underlying model) and \code{"boot"} (the confidence intervals are computed by bootstrap).
+For parameter \code{ci.method} the user can choose between \code{"param"} (parametric confidence intervals are calculated when assuming a trinormal underlying model) and \code{"boot"} (the confidence intervals are calculated by bootstrap).
 
 When at least one of the distributions is not \code{"norm"}, the function internally uses the \code{thresTH3()} function, which requires two intervals in which the two thresholds are expected to be found. These intervals are determined by the default values of \code{thresTH3()}. When all the distributions are \code{"norm"}, the function uses the \code{nlm()} function, which requires two starting values (passed through the argument \code{start}).
 }
@@ -112,7 +112,7 @@ An object of class \code{thres3}, which is a list with two components:
 
   \code{alpha}  significance level provided by the user.
   
-  \code{ci.method} method used for the confidence intervals computation.
+  \code{ci.method} method used for the confidence intervals calculation.
   
   When \code{ci.method = "boot"}, a list of eleven components:
   

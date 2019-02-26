@@ -542,6 +542,9 @@ thres3 <- function(k1, k2, k3, rho, costs=matrix(c(0, 1, 1, rho[1]/rho[2],0,rho[
   if (!is.numeric(k1) | !is.numeric(k2) | !is.numeric(k3)){
     stop("'k1', 'k2' and 'k3' must be numeric vectors")
   }
+  if (!is.logical(ci) | is.na(ci)){
+    stop("'ci' must be TRUE or FALSE")
+  }
   # NAs handling
   if (na.rm){
     k1 <- k1[!is.na(k1)]
@@ -823,7 +826,7 @@ icBootTH3 <- function(dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, par3.
 ##################################################################################
 ######	DENSITY PLOT
 ##################################################################################
-###### plot.thres3 function provides a graphic including the three sample densities,
+###### plot.thres3 function provides a graph including the three sample densities,
 ###### the thresholds and their confidence intervals
 ###### arguments:
 ######  x: 'thres3' object
@@ -855,12 +858,40 @@ icBootTH3 <- function(dist1, dist2, dist3, par1.1, par1.2, par2.1, par2.2, par3.
 ######       lwd[3]: line width for the density for the third sample
 ######       lwd[4]: line width for the thresholds and their corresponding CI
 ######       Default, c(1, 1, 1, 1).
-######  main, xlab, ...: further arguments to be passed to 'plot()'.
 ######  legend: logical asking if an automatic legend should be added to the graph. Default, TRUE.
 ######  leg.pos: position of the legend. Default, "topleft". Ignored if legend=FALSE.
 ######  leg.cex: a number that reescales the size of the legend. Ignored if legend=FALSE. Default, 1.
+######  xlim, ylim: 2-dimensional vectors indicating the limits for the plot
+######  main, xlab, ...: further arguments to be passed to 'plot()'.
 ##################################################################################
-plot.thres3 <- function(x, bw=c("nrd0", "nrd0", "nrd0"), ci=TRUE, which.boot=c("norm", "perc"), col=c(1, 2, 3, 1), lty=c(1, 1, 1, 1, 2), lwd=c(1, 1, 1, 1), main=paste0("Threshold estimates", ifelse(ci, " and CIs", "")), xlab="", legend=TRUE, leg.pos="topleft", leg.cex=1, ...){
+plot.thres3 <- function(x, bw=c("nrd0", "nrd0", "nrd0"), ci=TRUE, which.boot=c("norm", "perc"), col=c(1, 2, 3, 4), lty=c(1, 1, 1, 1, 2), lwd=c(1, 1, 1, 1), legend=TRUE, leg.pos="topleft", leg.cex=1, xlim=NULL, ylim=NULL, main=paste0("Threshold estimates", ifelse(ci, " and CIs", "")), xlab="", ...){
+  # error handling
+  if (!is.logical(ci) | is.na(ci)){
+    stop("'ci' must be TRUE or FALSE")
+  }
+  if (!is.logical(legend) | is.na(legend)){
+    stop("'legend' must be TRUE or FALSE")
+  }
+  if (!is.null(xlim)){
+    if (any(is.na(xlim)) | length(xlim)!=2){
+      stop("'xlim' must be NULL or a 2-dimensional vector containing no NAs")
+    }
+  }
+  if (!is.null(ylim)){
+    if (any(is.na(ylim)) | length(ylim)!=2){
+      stop("'ylim' must be NULL or a 2-dimensional vector containing no NAs")
+    }
+  }
+  # recycle col, lty, lwd
+  if (length(col)!=4){
+    col <- rep_len(col, 4)
+  }
+  if (length(lty)!=5){
+    lty <- rep_len(lty, 5)
+  }
+  if (length(lwd)!=4){
+    lwd <- rep_len(lwd, 4)
+  }
   which.boot <- match.arg(which.boot)
   k1 <- x$T$k1
   k2 <- x$T$k2
@@ -868,10 +899,21 @@ plot.thres3 <- function(x, bw=c("nrd0", "nrd0", "nrd0"), ci=TRUE, which.boot=c("
   dens.k1 <- density(k1, bw=bw[1])
   dens.k2 <- density(k2, bw=bw[2])
   dens.k3 <- density(k3, bw=bw[3])
-  min.x <- min(min(dens.k1$x), min(dens.k2$x), min(dens.k3$x))
-  max.x <- max(max(dens.k1$x), max(dens.k2$x), max(dens.k3$x))
-  max.y <- max(max(dens.k1$y), max(dens.k2$y), max(dens.k3$y))
-  plot(dens.k1, xlim=c(min.x, max.x), ylim=c(0, max.y), col=col[1], lty=lty[1], lwd=lwd[1], main=main, xlab=xlab, ...)
+  if (is.null(xlim)){
+    min.x <- min(min(dens.k1$x), min(dens.k2$x), min(dens.k3$x))
+    max.x <- max(max(dens.k1$x), max(dens.k2$x), max(dens.k3$x))
+  }else{
+    min.x <- xlim[1]
+    max.x <- xlim[2]
+  }
+  if (is.null(ylim)){
+    min.y <- 0
+    max.y <- max(max(dens.k1$y), max(dens.k2$y), max(dens.k3$y))
+  }else{
+    min.y <- ylim[1]
+    max.y <- ylim[2]
+  }
+  plot(dens.k1, xlim=c(min.x, max.x), ylim=c(min.y, max.y), col=col[1], lty=lty[1], lwd=lwd[1], main=main, xlab=xlab, ...)
   lines(dens.k2, col=col[2], lty=lty[2], lwd=lwd[2])
   lines(dens.k3, col=col[3], lty=lty[3], lwd=lwd[3])
   # thres
@@ -916,18 +958,25 @@ plot.thres3 <- function(x, bw=c("nrd0", "nrd0", "nrd0"), ci=TRUE, which.boot=c("
 ######  ...: further arguments to be passed to 'abline()'.
 ##################################################################################
 lines.thres3 <- function(x, ci=TRUE, which.boot=c("norm", "perc"), col=1, lty=c(1, 2), lwd=1, ...){
+  if (!is.logical(ci) | is.na(ci)){
+    stop("'ci' must be TRUE or FALSE")
+  }
   which.boot <- match.arg(which.boot)
+  # recycle lty
+  if (length(lty)!=2){
+    lty <- rep_len(lty, 2)
+  }
   # thres
   abline(v=x$T$thres1, col=col, lty=lty[1], lwd=lwd)
   abline(v=x$T$thres2, col=col, lty=lty[1], lwd=lwd)
   # CI
   if(ci & !is.null(x$CI)){
     if (x$CI$ci.method != "boot"){
-      abline(v=c(x$CI$lower1, x$CI$upper1), col=col, lty=lty[2], lwd=lwd)
-      abline(v=c(x$CI$lower2, x$CI$upper2), col=col, lty=lty[2], lwd=lwd)
+      abline(v=c(x$CI$lower1, x$CI$upper1), col=col, lty=lty[2], lwd=lwd, ...)
+      abline(v=c(x$CI$lower2, x$CI$upper2), col=col, lty=lty[2], lwd=lwd, ...)
     }else{
-      abline(v=c(x$CI[paste0("low.", which.boot, "1")], x$CI[paste0("up.", which.boot, "1")]), col=col,  lty=lty[2], lwd=lwd)
-      abline(v=c(x$CI[paste0("low.", which.boot, "2")], x$CI[paste0("up.", which.boot, "2")]), col=col,  lty=lty[2], lwd=lwd)
+      abline(v=c(x$CI[paste0("low.", which.boot, "1")], x$CI[paste0("up.", which.boot, "1")]), col=col,  lty=lty[2], lwd=lwd, ...)
+      abline(v=c(x$CI[paste0("low.", which.boot, "2")], x$CI[paste0("up.", which.boot, "2")]), col=col,  lty=lty[2], lwd=lwd, ...)
     }
   }  
 }

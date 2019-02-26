@@ -5,7 +5,7 @@
 %%   ~~ data name/kind ... ~~
 }
 \description{
-This dataset contains Standardized Uptake Value (SUV) measurements from 50 patients of breast cancer who underwent chemotherapy (\code{SUV} variable). Response to chemotherapy was evaluated using the pathology results in the surgical specimen which was taken as gold standard by assigning one of the following three states: stable disease, partial remission and complete remission (\code{resp} variable). A column indicating the identifier of the patient is also included (\code{id} variable).
+This dataset contains Standardized Uptake Value (SUV) measurements (\code{SUV} variable) from 50 patients of breast cancer who underwent chemotherapy. After surgery, response to chemotherapy was evaluated using the pathology results in the surgical specimens, which was taken as gold standard by assigning one of the following three states: stable disease, partial remission and complete remission (\code{resp} variable). A column indicating the identifier of the patient is also included (\code{id} variable).
 }
 \usage{data("chemo")}
 

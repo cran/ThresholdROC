@@ -21,7 +21,7 @@ an object of class \code{thres2}.
 should the confidence interval be plotted? Default, \code{TRUE}. No confidence interval will be plotted if \code{x} does not contain one (that is, \code{x$CI} is \code{NULL}).
 }
   \item{which.boot}{
-in case \code{x} contains confidence intervals computed by bootstrapping, which one should be printed? The user can choose between \code{"norm"} (based on normal distribution) or \code{"perc"} (based on percentiles). Default, \code{"norm"}. This argument is ignored if the confidence intervals were computed by the delta method.
+in case \code{x} contains confidence intervals calculated by bootstrapping, which one should be printed? The user can choose between \code{"norm"} (based on normal distribution) or \code{"perc"} (based on percentiles). Default, \code{"norm"}. This argument is ignored if the confidence intervals were calculated by the delta method.
 }
   \item{col}{
 color for the threshold and its corresponding confidence interval. Default, 1.
@@ -33,7 +33,7 @@ a 2-dimensional vector containing:
   
   \code{lty[2]}: line type for the confidence interval
   
-  Default, \code{c(1, 2)}.
+  Default, \code{c(1, 2)}. If \code{length(lty)} is not 2, \code{lty} will be recycled.
 }
   \item{lwd}{
 line width for the threshold and its corresponding confidence interval. Default, 1.

@@ -9,10 +9,12 @@ This function provides a graph including the three sample densities, the thresho
 }
 \usage{
 \method{plot}{thres3}(x, bw = c("nrd0", "nrd0", "nrd0"), ci = TRUE,
-  which.boot = c("norm", "perc"), col = c(1, 2, 3, 1),
+  which.boot = c("norm", "perc"), col = c(1, 2, 3, 4),
   lty = c(1, 1, 1, 1, 2), lwd = c(1, 1, 1, 1),
+  legend = TRUE, leg.pos = "topleft", leg.cex = 1,
+  xlim = NULL, ylim = NULL,
   main = paste0("Threshold estimates", ifelse(ci, " and CIs", "")),
-  xlab = "", legend = TRUE, leg.pos = "topleft", leg.cex = 1, \dots)
+  xlab = "", \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,7 +28,7 @@ vector containing the bandwith for the first sample in the first position, the b
 should the confidence intervals be plotted? Default, \code{TRUE}. No confidence intervals will be plotted if \code{x} does not contain one (that is, \code{x$CI} is \code{NULL}).
 }
   \item{which.boot}{
-in case \code{x} contains confidence intervals computed by bootstrapping, which one should be printed? The user can choose between \code{"norm"} (based on normal distribution) or \code{"perc"} (based on percentiles). Default, \code{"norm"}. This argument is ignored if parametric confidence intervals were computed. 
+in case \code{x} contains confidence intervals calculated by bootstrapping, which one should be printed? The user can choose between \code{"norm"} (based on normal distribution) or \code{"perc"} (based on percentiles). Default, \code{"norm"}. This argument is ignored if parametric confidence intervals were calculated. 
 }
   \item{col}{
 a 4-dimensional vector containing:
@@ -39,7 +41,7 @@ a 4-dimensional vector containing:
     
     \code{col[4]}: color for the thresholds and their corresponding confidence intervals
     
-    Default, \code{c(1, 2, 3, 1)}.
+    Default, \code{c(1, 2, 3, 4)}. If \code{length(col)} is not 4, \code{col} will be recycled.
 }
   \item{lty}{
 a 5-dimensional vector containing:
@@ -54,7 +56,7 @@ a 5-dimensional vector containing:
   
   \code{lty[5]}: line type for the confidence intervals
   
-  Default, \code{c(1, 1, 1, 1, 2)}.
+  Default, \code{c(1, 1, 1, 1, 2)}. If \code{length(lty)} is not 5, \code{lty} will be recycled.
 }
   \item{lwd}{
 a 4-dimensional vector containing:
@@ -67,7 +69,7 @@ a 4-dimensional vector containing:
 
   \code{lwd[4]}: line width for the thresholds and their corresponding confidence intervals
   
-  Default, \code{c(1, 1, 1, 1)}.
+  Default, \code{c(1, 1, 1, 1)}. If \code{length(lwd)} is not 4, \code{lwd} will be recycled.
 }
   \item{legend}{
 logical asking if an automatic legend should be added to the graph. Default, \code{TRUE}.
@@ -77,7 +79,12 @@ position of the legend. Default, \code{"topleft"}. Ignored if \code{legend=FALSE
 }
   \item{leg.cex}{
 number that reescales the size of the legend. Ignored if \code{legend=FALSE}. Default, 1.
-
+}
+  \item{xlim}{
+2-dimensional vector indicating the lower and upper limits for x-axis. Default value (NULL) sets those limits automatically.
+}
+  \item{ylim}{
+2-dimensional vector indicating the lower and upper limits for y-axis. Default value (NULL) sets those limits automatically.
 }
   \item{main, xlab, \dots}{
 further arguments to be passed to \code{plot()}.

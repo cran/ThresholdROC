@@ -5,7 +5,7 @@
 Threshold point estimation and confidence intervals (two-state setting)
 }
 \description{
-This function computes the threshold estimate and its corresponding confidence interval in a two-state setting.
+This function calculates the threshold estimate and its corresponding confidence interval in a two-state setting.
 }
 \usage{
 thres2(k1, k2, rho,
@@ -52,7 +52,7 @@ number of bootstrap resamples when \code{ci.method = "boot"}. Otherwise, ignored
 significance level for the confidence interval. Default, 0.05.
 }
   \item{extra.info}{
-when using \code{method="empirical"}, if set to \code{TRUE} the function returns extra information about the computation of the threshold. Ignored when \code{method} is not \code{"empirical"}. Default, \code{FALSE}.
+when using \code{method="empirical"}, if set to \code{TRUE} the function returns extra information about the calculation of the threshold. Ignored when \code{method} is not \code{"empirical"}. Default, \code{FALSE}.
 }
   \item{na.rm}{
 a logical value indicating whether \code{NA} values in \code{k1} and \code{k2} should be stripped before the computation proceeds. Default, \code{FALSE}.
@@ -63,7 +63,7 @@ For parameter \code{method} the user can choose between \code{"equal"} (assumes 
 
 Parameters \code{dist1} and \code{dist2} can be chosen between the following 2-parameter distributions: \code{"beta"}, \code{"cauchy"}, \code{"chisq"} (chi-squared), \code{"gamma"}, \code{"lnorm"} (lognormal), \code{"logis"} (logistic), \code{"norm"} (normal) and \code{"weibull"}. Notice that \code{dist1} and \code{dist2} are only needed when \code{method = "parametric"}.
 
-For parameter \code{ci.method} the user can choose between \code{"delta"} (delta method is used to estimate the threshold standard error assuming a binormal underlying model) or \code{"boot"} (the confidence interval is computed by bootstrap).
+For parameter \code{ci.method} the user can choose between \code{"delta"} (delta method is used to estimate the threshold standard error assuming a binormal underlying model) or \code{"boot"} (the confidence interval is calculated by bootstrap).
 }
 \value{
 An object of class \code{thres2}, which is a list with two components:
@@ -134,7 +134,7 @@ An object of class \code{thres2}, which is a list with two components:
   
   \code{B}  number of bootstrap resamples used.
   
-  \code{ci.method}  method used for the confidence intervals computation.
+  \code{ci.method}  method used for the confidence intervals calculation.
   
   When \code{ci = FALSE}, \code{NULL}.
   }

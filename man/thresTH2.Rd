@@ -1,7 +1,7 @@
 \name{thresTH2}
 \alias{thresTH2}
 \title{
-Population-based threshold computation (two-state setting)
+Population-based threshold calculation (two-state setting)
 }
 \description{
 This function estimates the theoretical optimum threshold for the specific distribution parameters, decision costs and disease prevalence in a two-state setting.

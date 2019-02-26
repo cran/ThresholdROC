@@ -315,7 +315,7 @@ thresEmp2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, b
   k2.origin <- k2
   rho.origin <- rho
   costs.origin <- costs
-  if(mean(k1)>mean(k2)){
+  if (mean(k1)>mean(k2)){
     rho <- 1-rho
     costs <- costs[, 2:1] # change c.t.pos <-> c.t.neg and c.f.pos <-> c.f.neg
     g <- k1; k1 <- k2; k2 <- g
@@ -541,7 +541,7 @@ getParams <- function(k, dist){
 thres2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE), method=c("equal", "unequal", "empirical", "parametric"), dist1=NULL, dist2=NULL, ci=TRUE, ci.method=c("delta", "boot"), B=1000, alpha=0.05, extra.info=FALSE, na.rm=FALSE){
   # error handling
   if (!(rho > 0 & rho < 1)){
-    stop("The disease prevalence rho must be a number in (0,1)")
+    stop("The disease prevalence 'rho' must be a number in (0,1)")
   }
   if (!is.matrix(costs)){
     stop("'costs' must be a matrix")
@@ -551,6 +551,9 @@ thres2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byro
   }
   if (!is.numeric(k1) | !is.numeric(k2)){
     stop("'k1' and 'k2' must be numeric vectors")
+  }
+  if (!is.logical(ci) | is.na(ci)){
+    stop("'ci' must be TRUE or FALSE")
   }
   # NAs handling
   if (na.rm){
@@ -1126,6 +1129,7 @@ icBootTH <- function(dist1, dist2, par1.1, par1.2, par2.1, par2.2, n1, n2, rho, 
 ######        type: type of pline for plots
 ##################################################################################
 plotCostROC <- function(x, type="l", ...){
+  # error handling
   if (!(class(x) %in% c("thres2", "thres3"))){
     stop("'x' must be a 'thres2' or 'thres3' object")
   }
@@ -1350,7 +1354,7 @@ plotCostROC <- function(x, type="l", ...){
 ######       col[1]: color for the density of the non-diseased sample
 ######       col[2]: color for the density for the diseased sample
 ######       col[3]: color for the threshold and its corresponding CI
-######       Default, c(1, 2, 1).
+######       Default, c(1, 2, 3).
 ######  lty: 4-dimensional vector:
 ######       lty[1]: line type for the density of the non-diseased sample
 ######       lty[2]: line type for the density of the diseased sample
@@ -1362,21 +1366,60 @@ plotCostROC <- function(x, type="l", ...){
 ######       lwd[2]: line width for the density for the diseased sample
 ######       lwd[3]: line width for the threshold and its corresponding CI
 ######       Default, c(1, 1, 1).
-######  main, xlab, ...: further arguments to be passed to 'plot()'.
 ######  legend: logical asking if an automatic legend should be added to the graph. Default, TRUE.
 ######  leg.pos: position of the legend. Default, "topleft". Ignored if legend=FALSE.
 ######  leg.cex: a number that reescales the size of the legend. Ignored if legend=FALSE. Default, 1.
+######  xlim, ylim: 2-dimensional vectors indicating the limits for the plot
+######  main, xlab...: further arguments to be passed to 'plot()'.
 ##################################################################################
-plot.thres2 <- function(x, bw=c("nrd0", "nrd0"), ci=TRUE, which.boot=c("norm", "perc"), col=c(1, 2, 1), lty=c(1, 1, 1, 2), lwd=c(1, 1, 1), main=paste0("Threshold estimate ", ifelse(ci, "and CI ", ""), "(method ", x$T$method, ")"), xlab="", legend=TRUE, leg.pos="topleft", leg.cex=1, ...){
+plot.thres2 <- function(x, bw=c("nrd0", "nrd0"), ci=TRUE, which.boot=c("norm", "perc"), col=c(1, 2, 3), lty=c(1, 1, 1, 2), lwd=c(1, 1, 1), legend=TRUE, leg.pos="topleft", leg.cex=1, xlim=NULL, ylim=NULL, main=paste0("Threshold estimate ", ifelse(ci, "and CI ", ""), "(method ", x$T$method, ")"), xlab="", ...){
+  # error handling
+  if (!is.logical(ci) | is.na(ci)){
+    stop("'ci' must be TRUE or FALSE")
+  }
+  if (!is.logical(legend) | is.na(legend)){
+    stop("'legend' must be TRUE or FALSE")
+  }
+  if (!is.null(xlim)){
+    if (any(is.na(xlim)) | length(xlim)!=2){
+      stop("'xlim' must be NULL or a 2-dimensional vector containing no NAs")
+    }
+  }
+  if (!is.null(ylim)){
+    if (any(is.na(ylim)) | length(ylim)!=2){
+      stop("'ylim' must be NULL or a 2-dimensional vector containing no NAs")
+    }
+  }
+  # recycle col, lty, lwd
+  if (length(col)!=3){
+    col <- rep_len(col, 3)
+  }
+  if (length(lty)!=4){
+    lty <- rep_len(lty, 4)
+  }
+  if (length(lwd)!=3){
+    lwd <- rep_len(lwd, 3)
+  }
   which.boot <- match.arg(which.boot)
   k1 <- x$T$k1
   k2 <- x$T$k2
   dens.k1 <- density(k1, bw=bw[1])
   dens.k2 <- density(k2, bw=bw[2])
-  min.x <- min(min(dens.k1$x), min(dens.k2$x))
-  max.x <- max(max(dens.k1$x), max(dens.k2$x))
-  max.y <- max(max(dens.k1$y), max(dens.k2$y))
-  plot(dens.k1, xlim=c(min.x, max.x), ylim=c(0, max.y), col=col[1], lty=lty[1], lwd=lwd[1], main=main, xlab=xlab, ...)
+  if (is.null(xlim)){
+    min.x <- min(min(dens.k1$x), min(dens.k2$x))
+    max.x <- max(max(dens.k1$x), max(dens.k2$x))
+  }else{
+    min.x <- xlim[1]
+    max.x <- xlim[2]
+  }
+  if (is.null(ylim)){
+    min.y <- 0
+    max.y <- max(max(dens.k1$y), max(dens.k2$y))
+  }else{
+    min.y <- ylim[1]
+    max.y <- ylim[2]
+  }
+  plot(dens.k1, xlim=c(min.x, max.x), ylim=c(min.y, max.y), col=col[1], lty=lty[1], lwd=lwd[1], main=main, xlab=xlab, ...)
   lines(dens.k2, col=col[2], lty=lty[2], lwd=lwd[2])
   # thres
   abline(v=x$T$thres, col=col[3], lty=lty[3], lwd=lwd[3])
@@ -1385,7 +1428,7 @@ plot.thres2 <- function(x, bw=c("nrd0", "nrd0"), ci=TRUE, which.boot=c("norm", "
     if (x$CI$ci.method != "boot"){
       abline(v=c(x$CI$lower, x$CI$upper), col=col[3], lty=lty[4], lwd=lwd[3])
     }else{
-      abline(v=c(x$CI[paste0("low.", which.boot)], x$CI[paste0("up.", which.boot)]), col=col[3],  lty=lty[4], lwd=lwd[3])
+      abline(v=c(x$CI[paste0("low.", which.boot)], x$CI[paste0("up.", which.boot)]), col=col[3], lty=lty[4], lwd=lwd[3])
     }
   }  
   # legend
@@ -1417,6 +1460,14 @@ plot.thres2 <- function(x, bw=c("nrd0", "nrd0"), ci=TRUE, which.boot=c("norm", "
 ######  ...: further arguments to be passed to 'abline()'.
 ##################################################################################
 lines.thres2 <- function(x, ci=TRUE, which.boot=c("norm", "perc"), col=1, lty=c(1, 2), lwd=1, ...){
+  # error handling
+  if (!is.logical(ci) | is.na(ci)){
+    stop("'ci' must be TRUE or FALSE")
+  }
+  # recicle lty
+  if (length(lty)!=2){
+    lty <- rep_len(lty, 2)
+  }
   which.boot <- match.arg(which.boot)
   # thres
   abline(v=x$T$thres, col=col, lty=lty[1], lwd=lwd)
@@ -1425,7 +1476,7 @@ lines.thres2 <- function(x, ci=TRUE, which.boot=c("norm", "perc"), col=1, lty=c(
     if (x$CI$ci.method != "boot"){
       abline(v=c(x$CI$lower, x$CI$upper), col=col, lty=lty[2], lwd=lwd, ...)
     }else{
-      abline(v=c(x$CI[paste0("low.", which.boot)], x$CI[paste0("up.", which.boot)]), col=col,  lty=lty[2], lwd=lwd, ...)
+      abline(v=c(x$CI[paste0("low.", which.boot)], x$CI[paste0("up.", which.boot)]), col=col, lty=lty[2], lwd=lwd, ...)
     }
   }
 }
@@ -1562,6 +1613,9 @@ SS <- function(par1.1, par1.2, par2.1, par2.2=NULL, rho, width, costs=matrix(c(0
   }
   if (width<=0){
     stop("'width' must be a positive number")
+  }
+  if (!is.logical(var.equal) | is.na(var.equal)){
+    stop("'var.equal' must be TRUE or FALSE")
   }
   if (var.equal){
     if (!is.null(par2.2)){

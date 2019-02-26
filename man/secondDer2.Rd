@@ -5,7 +5,7 @@
 Second partial derivative of the cost function (two-state setting)
 }
 \description{
-Calculates the second partial derivative of the cost function at a given threshold.
+This function calculates the second partial derivative of the cost function at a given threshold.
 }
 \usage{
 secondDer2(x)

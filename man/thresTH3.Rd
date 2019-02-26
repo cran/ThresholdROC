@@ -1,7 +1,7 @@
 \name{thresTH3}
 \alias{thresTH3}
 \title{
-Population-based threshold computation (three-state setting)
+Population-based threshold calculation (three-state setting)
 }
 \description{
 This function estimates the theoretical optimum thresholds for the specific distribution parameters, decision costs and prevalences in a three-state setting.
