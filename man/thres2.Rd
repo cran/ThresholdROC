@@ -110,22 +110,26 @@ An object of class \code{thres2}, which is a list with two components:
   \code{pars2}  a numeric vector containing the estimation of the parameters of \code{dist2}.
 
   }
-\item{CI }{When \code{ci.method = "delta"}, a list of four components:
+\item{CI }{When \code{ci.method = "delta"}, a list of five components:
 
   \code{lower}  the lower limit of the confidence interval.
 
   \code{upper}  the upper limit of the confidence interval.
   
+  \code{se}  the standard error used in the calculation of the confidence interval. 
+  
   \code{alpha}  significance level provided by the user.
   
   \code{ci.method} method used for the confidence intervals calculation.
   
-  When \code{ci.method = "boot"}, a list of seven components:
+  When \code{ci.method = "boot"}, a list of eight components:
   
   \code{low.norm}  the lower limit of the bootstrap confidence interval based on the normal distribution.
   
   \code{up.norm}  the upper limit of the bootstrap confidence interval based on the normal distribution.
   
+  \code{se}  the bootstrap standard error used in the calculation of the confidence interval based on the normal distribution. 
+
   \code{low.perc} the lower limit of the bootstrap confidence interval based on percentiles.
   
   \code{up.perc}  the upper limit of the bootstrap confidence interval based on percentiles.

@@ -87,7 +87,7 @@ sqroot <- function(k1, k2, rho, costs){
 ##### THRESHOLD DEPENDING ON THE UNDERLYING DISTRIBUTION OF THE POPULATIONS
 ##### COST-MINIMISING THRESHOLD ONE-VARIABLE EQUATION
 ##### DENSITY RATIO FORMULA
-##### arguments:  p=vector containing the interval extremes at which the ?uniroot? function will look for 
+##### arguments:  p=vector containing the interval extremes at which the 'uniroot' function will look for 
 #####                         the one-variable equation solution  
 #####		          dist1=choose the healthy distribution
 #####		   	      dist2=choose the diseased distribution			
@@ -149,7 +149,7 @@ thresTH2 <- function(dist1, dist2, par1.1, par1.2, par2.1, par2.2, rho, costs=ma
   p1 <- quant(dist1)(q1, par1.1, par1.2)
   p2 <- quant(dist2)(q2, par2.1, par2.2)
   # threshold estimate
-  cut.t <- uniroot(DensRatio2,c(p1,p2),tol=tol,dist1,dist2,par1.1,par1.2,par2.1,par2.2,rho,costs)$root
+  cut.t <- uniroot(DensRatio2,c(p1,p2),tol=tol,dist1,dist2,par1.1,par1.2,par2.1,par2.2,rho,costs,extendInt="yes")$root
   # add slope
   beta <- slope(rho, costs)
   # results
@@ -757,7 +757,7 @@ icDeltaEq2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, 
   stdev <- sqrt(varDeltaEq2(k1, k2, rho, costs))  
   ic1 <- Thres + qnorm(a/2)*stdev
   ic2 <- Thres + qnorm(1-a/2)*stdev  
-  ic <- list(lower=ic1, upper=ic2, alpha=a, ci.method="delta")
+  ic <- list(lower=ic1, upper=ic2, se=stdev, alpha=a, ci.method="delta")
   return(ic)
 }
 
@@ -895,7 +895,7 @@ icDeltaUn2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, 
   stdev <- sqrt(varDeltaUn2(k1, k2, rho, costs))	
   ic1 <- Thres + qnorm(a/2)*stdev
   ic2 <- Thres + qnorm(1-a/2)*stdev
-  ic <- list(lower=ic1, upper=ic2, alpha=a, ci.method="delta")  
+  ic <- list(lower=ic1, upper=ic2, se=stdev, alpha=a, ci.method="delta")  
   return(ic)
 }
 
@@ -961,7 +961,7 @@ icBootEq2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, b
   percentil <- (c(quantile(cut,a/2), quantile(cut,1-a/2)))
   
   # results
-  re <- list(low.norm=norm.bootSE[1], up.norm=norm.bootSE[2], low.perc=percentil[1], up.perc=percentil[2], alpha=a, B=B, ci.method="boot")
+  re <- list(low.norm=norm.bootSE[1], up.norm=norm.bootSE[2], se=est.se, low.perc=percentil[1], up.perc=percentil[2], alpha=a, B=B, ci.method="boot")
   return(re)
 }
 
@@ -1002,7 +1002,7 @@ icBootUn2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, b
   percentil <- (c(quantile(na.omit(cut),a/2), quantile(na.omit(cut),1-a/2)))
   
   # results
-  re <- list(low.norm=norm.bootSE[1], up.norm=norm.bootSE[2], low.perc=percentil[1], up.perc=percentil[2], alpha=a, B=B, ci.method="boot")
+  re <- list(low.norm=norm.bootSE[1], up.norm=norm.bootSE[2], se=est.se, low.perc=percentil[1], up.perc=percentil[2], alpha=a, B=B, ci.method="boot")
   return(re)
 }
 
@@ -1048,7 +1048,7 @@ icEmp2 <- function(k1,k2,rho,costs=matrix(c(0,0,1,(1-rho)/rho),2,2, byrow=TRUE),
   percentil <- (c(quantile(cut,a/2), quantile(cut,1-a/2)))
   
   # results
-  re <- list(low.norm=norm[1], up.norm=norm[2], low.perc=percentil[1], up.perc=percentil[2], alpha=a, B=B, ci.method="boot")
+  re <- list(low.norm=norm[1], up.norm=norm[2], se=est.se, low.perc=percentil[1], up.perc=percentil[2], alpha=a, B=B, ci.method="boot")
   return(re)
 }
 
@@ -1109,7 +1109,7 @@ icBootTH <- function(dist1, dist2, par1.1, par1.2, par2.1, par2.2, n1, n2, rho, 
   percentil <- (c(quantile(na.omit(cut),a/2), quantile(na.omit(cut),1-a/2)))
   
   # results
-  re <- list(low.norm=norm.bootSE[1], up.norm=norm.bootSE[2], low.perc=percentil[1], up.perc=percentil[2], alpha=a, B=B, ci.method="boot")
+  re <- list(low.norm=norm.bootSE[1], up.norm=norm.bootSE[2], se=est.se, low.perc=percentil[1], up.perc=percentil[2], alpha=a, B=B, ci.method="boot")
   return(re)
 }
 
@@ -1186,7 +1186,7 @@ plotCostROC <- function(x, type="l", ...){
       }   
       resp <- c(rep(0, length(x$T$k1)), rep(1, length(x$T$k2)))
       resp.CUT <- factor(resp.CUT, c("0", "1"))
-      roc <- roc(response=resp, predictor=k)
+      roc <- roc(response=resp, predictor=k, quiet=TRUE)
       plot(roc)
       # add sens and spec given by the threshold
       tab <- table(resp.CUT, resp)[2:1, 2:1]
@@ -1234,7 +1234,7 @@ plotCostROC <- function(x, type="l", ...){
       }   
       resp <- c(rep(0, length(x$T$k1)), rep(1, length(x$T$k2)))
       resp.CUT <- factor(resp.CUT, c("0", "1"))
-      roc <- roc(response=resp, predictor=k)
+      roc <- roc(response=resp, predictor=k, quiet=TRUE)
       plot(roc)
       # add sens and spec given by the threshold
       tab <- table(resp.CUT, resp)[2:1, 2:1]
@@ -1285,7 +1285,7 @@ plotCostROC <- function(x, type="l", ...){
        }   
        resp <- c(rep(0, length(x$T$k1)), rep(1, length(x$T$k2)))
        resp.CUT <- factor(resp.CUT, c("0", "1"))
-       roc <- roc(response=resp, predictor=k)
+       roc <- roc(response=resp, predictor=k, quiet=TRUE)
        plot(roc)
        # add sens and spec given by the threshold
        tab <- table(resp.CUT, resp)[2:1, 2:1]

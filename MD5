@@ -1,6 +1,6 @@
-0936f83e3350861681c64f0f2c4a3613 *DESCRIPTION
+f438d9742ff6d67970c683f671969f2f *DESCRIPTION
 da5b3de90fa3b91d06c156c2980773f1 *NAMESPACE
-bccba3fb90f40bf6cd686960e8925d83 *R/ThresholdROC-2states.R
+032196ea58cb848cfa6bc09ee486e6f9 *R/ThresholdROC-2states.R
 8521a2b29ded4223a9872f7fd3cef332 *R/ThresholdROC-3states.R
 88cd6e6aaf9d8f927e4ceaa18ec17147 *R/diagnostic.R
 acc5d95b35a4bf708fee814d31acf543 *data/AD.txt.gz
@@ -8,7 +8,7 @@ ba7d735751b8f1a6927c5474c121161f *data/chemo.txt.gz
 1f2edb152b6dd65e57fe370dbd6b55f5 *inst/CITATION
 899964a2dc70a9af0de5d1df0d30aa17 *man/AD.Rd
 750d928f2a05ad26b9fbdfa14ad66600 *man/SS.Rd
-d1fdfd46687e85deef6c3b6a24d133ac *man/ThresholdROC-package.Rd
+17b0287dba087c43f68afd66e75f5a5c *man/ThresholdROC-package.Rd
 387f04da0f622f48a0841900b98a495a *man/chemo.Rd
 edf1c93b33e0de222a6801fb19980f48 *man/diagnostic.Rd
 1628bb1939845e0b6b20994277d368ec *man/lines-thres2.Rd
@@ -18,7 +18,7 @@ edf1c93b33e0de222a6801fb19980f48 *man/diagnostic.Rd
 0d147a6b278923d75668bd243c90aa54 *man/plotCostROC.Rd
 a63ef0cd38ccd538c1870f28d770cf1f *man/secondDer2.Rd
 a83a9aac3eaa8e1dce7da7471a94b39d *man/secondDer3.Rd
-fb645d036ddac3a9835e4384b048e260 *man/thres2.Rd
+56de75b3c03716b94df0bb3d67381288 *man/thres2.Rd
 20691b3f283463cebf58328dcfa21c30 *man/thres3.Rd
 be0ec7c8bc9fe41ff74ecbee1b14a03e *man/thresTH2.Rd
 e8fbf5fcee82048694a7328763c81e5a *man/thresTH3.Rd
