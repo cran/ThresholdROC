@@ -538,7 +538,7 @@ getParams <- function(k, dist){
 #####            be stripped before the computation proceeds. Default, FALSE.
 ##### value: the threshold estimated
 ##########################################################################
-thres2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE), method=c("equal", "unequal", "empirical", "parametric"), dist1=NULL, dist2=NULL, ci=TRUE, ci.method=c("delta", "boot"), B=1000, alpha=0.05, extra.info=FALSE, na.rm=FALSE){
+thres2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE), method=c("equal", "unequal", "empirical", "parametric"), dist1=NULL, dist2=NULL, ci=TRUE, ci.method=c("delta", "boot"), B=1000, alpha=0.05, extra.info=FALSE, na.rm=FALSE, q1=0.05, q2=0.95){
   # error handling
   if (!(rho > 0 & rho < 1)){
     stop("The disease prevalence 'rho' must be a number in (0,1)")
@@ -623,7 +623,7 @@ thres2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byro
     # dist2
     pars2 <- getParams(k2, dist2)
     # threshold+CI estimation
-    T <- thresTH2(dist1, dist2, pars1[1], pars1[2], pars2[1], pars2[2], rho, costs)
+    T <- thresTH2(dist1, dist2, pars1[1], pars1[2], pars2[1], pars2[2], rho, costs, q1=q1, q2=q2)
     T <- unclass(T)
     T$method <- "parametric"
     # adding some information to the output

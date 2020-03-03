@@ -12,7 +12,7 @@ thres2(k1, k2, rho,
   costs = matrix(c(0, 0, 1, (1 - rho)/rho), 2, 2, byrow = TRUE),
   method = c("equal", "unequal", "empirical", "parametric"),
   dist1 = NULL, dist2 = NULL, ci = TRUE, ci.method = c("delta", "boot"),
-  B = 1000, alpha = 0.05, extra.info = FALSE, na.rm = FALSE)
+  B = 1000, alpha = 0.05, extra.info = FALSE, na.rm = FALSE, q1=0.05, q2=0.95)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -56,6 +56,12 @@ when using \code{method="empirical"}, if set to \code{TRUE} the function returns
 }
   \item{na.rm}{
 a logical value indicating whether \code{NA} values in \code{k1} and \code{k2} should be stripped before the computation proceeds. Default, \code{FALSE}.
+}
+  \item{q1}{
+probability of the left distribution in order to determine a low quantile when \code{method="parametric"} (ignored otherwise). Default, 0.05.
+}
+  \item{q2}{
+probability of the right distribution in order to determine a high quantile when \code{method="parametric"} (ignored otherwise). Default, 0.95.
 }
 }
 \details{
