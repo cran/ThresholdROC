@@ -44,8 +44,8 @@ significance level for the confidence interval. Default, 0.05.
 }
 \value{
 an object of class \code{SS} which is a list with eight components:
-\item{ss2 }{sample size for the healthy group}
-\item{ss1 }{sample size for the diseased group}
+\item{ss2}{sample size for the diseased group}
+\item{ss1}{sample size for the healthy group}
 \item{epsilon}{sample size ratio between non-diseased and diseased subjects}
 \item{width}{width of the confidence interval provided by the user}
 \item{alpha}{significance level provided by the user}
