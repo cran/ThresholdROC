@@ -28,7 +28,7 @@ If the argument \code{x} was constructed with \code{method="empirical"}, the arg
 For parameter \code{type} the following values are possible: \code{"p"} for points, \code{"l"} for lines, \code{"b"} for both points and lines, \code{"c"} for empty points joined by lines, \code{"o"} for overplotted points and lines, \code{"s"} and \code{"S"} for stair steps and \code{"h"} for histogram-like vertical lines. Finally, \code{"n"} does not produce any points or lines.
 }
 \value{
-When \code{x} is an object of class \code{thres2}, two plots are produced. The first one shows the cost function with the cost minimising threshold in red. The second one is the step ROC curve with the sensitivity and specificity achieved in red. If \code{method = "empirical"} is used when building \code{x}, empirical cost function and ROC curve are plotted.
+When \code{x} is an object of class \code{thres2}, two plots are produced. The first one shows the cost function with the cost minimising threshold in red. The second one is the step ROC curve with the sensitivity and specificity achieved in red. If \code{method = "empirical"} is used when building \code{x}, empirical cost function and ROC curve are plotted. If \code{method = "smooth"} is used when building \code{x}, smooth cost function and ROC curve are plotted.
 
 When \code{x} is an object of class \code{thres3}, two plots are produced. The first one shows the cost function C(T1) with the first cost minimising threshold in red. The second one shows the cost function C(T2) with the second cost minimising threshold in red.
 }

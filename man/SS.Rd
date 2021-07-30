@@ -9,8 +9,8 @@ Estimates the sample size and the optimum sample size ratio needed for a given w
 }
 \usage{
 SS(par1.1, par1.2, par2.1, par2.2=NULL, rho, width,
-  costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE),
-  var.equal=FALSE, alpha=0.05)
+   costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE),
+   R=NULL, var.equal=FALSE, alpha=0.05)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -33,7 +33,10 @@ disease prevalence.
 desired interval width.
 }
   \item{costs}{
-cost matrix. Costs should be entered as a 2x2 matrix, where the first row corresponds to the true positive and true negative costs and the second row to the false positive and false negative costs. Default cost values are a combination of costs that yields R=1, which would be the equivalent to the Youden index method.
+cost matrix. Costs should be entered as a 2x2 matrix, where the first row corresponds to the true positive and true negative costs and the second row to the false positive and false negative costs. Default cost values are a combination of costs that yields R=1, which is equivalent to the Youden index method (for details about this concept, see \bold{References}). It must be set to \code{NULL} if the user prefers to set \code{R} (see next argument).
+}
+  \item{R}{
+if the cost matrix \code{costs} is not set, R desired (the algorithm will choose a suitable combination of costs that leads to \code{R}). Default, \code{NULL} (which leads to R=1 using the default \code{costs}).
 }
   \item{var.equal}{
 a logical variable indicating whether to use equal variances. Default, \code{FALSE}.

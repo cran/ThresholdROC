@@ -9,7 +9,7 @@ This function estimates the theoretical optimum threshold for the specific distr
 \usage{
 thresTH2(dist1, dist2, par1.1, par1.2, par2.1, par2.2, rho,
   costs = matrix(c(0, 0, 1, (1 - rho)/rho), 2, 2, byrow = TRUE), 
-  q1 = 0.05, q2 = 0.95, tol = 10^(-8))
+  R=NULL, q1 = 0.05, q2 = 0.95, tol = 10^(-8))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -35,7 +35,10 @@ second parameter of the distribution chosen for the diseased population.
 disease prevalence.
 }
   \item{costs}{
-cost matrix. Costs should be entered as a 2x2 matrix, where the first row corresponds to the true positive and true negative costs and the second row to the false positive and false negative costs. Default cost values are a combination of costs that yields R=1, which would be the equivalent to the Youden index method (for details about this concept, see \bold{References}).
+cost matrix. Costs should be entered as a 2x2 matrix, where the first row corresponds to the true positive and true negative costs and the second row to the false positive and false negative costs. Default cost values are a combination of costs that yields R=1, which is equivalent to the Youden index method (for details about this concept, see \bold{References}). It must be set to \code{NULL} if the user prefers to set \code{R} (see next argument).
+}
+  \item{R}{
+if the cost matrix \code{costs} is not set, R desired (the algorithm will choose a suitable combination of costs that leads to \code{R}). Default, \code{NULL} (which leads to R=1 using the default \code{costs}).
 }
   \item{q1}{
 probability of the left distribution in order to determine a low quantile. Default, 0.05.

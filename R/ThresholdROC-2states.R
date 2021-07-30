@@ -123,17 +123,37 @@ DensRatio2 <- function(p, dist1, dist2, par1.1, par1.2, par2.1, par2.2, rho, cos
 ##### value: an object of class "thresTH2" containing the threshold one-variable equation solution,
 #####        the prevalence, the cost matrix and the slope.      
 ############################################################################
-thresTH2 <- function(dist1, dist2, par1.1, par1.2, par2.1, par2.2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE), q1=0.05, q2=0.95, tol=10^(-8)){
+thresTH2 <- function(dist1, dist2, par1.1, par1.2, par2.1, par2.2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE), R=NULL, q1=0.05, q2=0.95, tol=10^(-8)){
   # error handling
   if (!(rho > 0 & rho < 1)){
     stop("The disease prevalence rho must be a number in (0,1)")
   }
-  if (!is.matrix(costs)){
-    stop("'costs' must be a matrix")
+  # if (!is.matrix(costs)){
+  #   stop("'costs' must be a matrix")
+  # }
+  # if (dim(costs)[1] != 2 | dim(costs)[2] != 2){
+  #   stop("'costs' must be a 2x2 matrix")
+  # }
+  
+  # costs or R
+  if (is.null(costs) & is.null(R)){
+    stop("Both 'costs' and 'R' are NULL. Please specify one of them.")
+  }else if (!is.null(costs) & !is.null(R)){
+    stop("Either 'costs' or 'R' must be NULL")
+  }else if (is.null(costs) & !is.null(R)){
+    if (!is.numeric(R) | length(R)!=1){
+      stop("R must be a single number")
+    }
+    costs <- matrix(c(0, 0, 1, (1-rho)/(R*rho)), 2, 2, byrow=TRUE)
+  }else if (!is.null(costs) & is.null(R)){
+    if (!is.matrix(costs)){
+      stop("'costs' must be a matrix")
+    }
+    if (dim(costs)[1] != 2 | dim(costs)[2] != 2){
+      stop("'costs' must be a 2x2 matrix")
+    }
   }
-  if (dim(costs)[1] != 2 | dim(costs)[2] != 2){
-    stop("'costs' must be a 2x2 matrix")
-  }
+  
   # function
   costs.origin <- costs
   rho.origin <- rho
@@ -152,6 +172,12 @@ thresTH2 <- function(dist1, dist2, par1.1, par1.2, par2.1, par2.2, rho, costs=ma
   cut.t <- uniroot(DensRatio2,c(p1,p2),tol=tol,dist1,dist2,par1.1,par1.2,par2.1,par2.2,rho,costs,extendInt="yes")$root
   # add slope
   beta <- slope(rho, costs)
+  # check interval for R
+  if (dist1=="norm" & dist2=="norm" & par1.2!=par2.2){
+   LL <- par1.2/par2.2*exp(-(par2.1-par1.1)^2/(2*par2.2^2))
+   UL <- par1.2/par2.2*exp((par2.1-par1.1)^2/(2*par1.2^2))
+   if (!(LL<=beta & beta<=UL)) warning("The choice of costs/R leads to a cut-off that is not between the means of the two distributions")
+  }
   # results
   re <- list(thres=cut.t, prev=rho.origin, costs=costs.origin, R=beta, method="theoretical")
   # return
@@ -291,6 +317,10 @@ thresUn2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, by
     warning("Negative discriminant; cannot solve the second-degree equation")
   }
   beta <- slope(rho, costs)
+  # check interval for R
+  LL <- sd(k1)/sd(k2)*exp(-(mean(k2)-mean(k1))^2/(2*sd(k2)^2))
+  UL <- sd(k1)/sd(k2)*exp((mean(k2)-mean(k1))^2/(2*sd(k1)^2))
+  if (!(LL<=beta & beta<=UL)) warning("The choice of costs/R leads to a cut-off that is not between the means of the two distributions")
   # returning results
   re <- list(thres=cut, prev=rho.origin, costs=costs.origin, R=beta, method="unequal", k1=k1.origin, k2=k2.origin)
   return(re)
@@ -376,7 +406,7 @@ thresEmp2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, b
   beta <- slope(rho, costs)
   
   # results
-  re <- list(thres=cut.min, sens=sens.min, spec=spec.min, cost=cost.min, costs=costs.origin, R=beta, prev=rho.origin, method="empirical", k1=k1.origin, k2=k2.origin)
+  re <- list(thres=cut.min, prev=rho.origin, costs=costs.origin, R=beta, method="empirical", k1=k1.origin, k2=k2.origin, sens=sens.min, spec=spec.min, cost=cost.min)
   
   # for plotCostROC if extra.info is TRUE
   if (extra.info){
@@ -387,6 +417,62 @@ thresEmp2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, b
   }
   return(re)
 }
+
+
+##########################################################################
+#########         SMOOTH METHOD
+##########################################################################
+##########################################################################
+##### arguments: k1=vector containing the healthy sample values 
+#####		   	     k2=vector containing the diseased sample values
+#####  	   	     rho=disease prevalence
+#####		   	     costs=cost matrix
+##### value: the threshold estimated by the two samples through the smooth estimator
+##########################################################################
+thresSmooth2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE), extra.info=FALSE){
+  k1.origin <- k1
+  k2.origin <- k2
+  rho.origin <- rho
+  costs.origin <- costs
+  if (mean(k1)>mean(k2)){
+    rho <- 1-rho
+    costs <- costs[, 2:1] # change c.t.pos <-> c.t.neg and c.f.pos <-> c.f.neg
+    g <- k1; k1 <- k2; k2 <- g
+  }
+  # cost matrix
+  c.t.pos <- costs[1,1]
+  c.t.neg <- costs[1,2]
+  c.f.pos <- costs[2,1]
+  c.f.neg <- costs[2,2]
+  
+  # smooth estimation
+  dk1 <- kde(k1)
+  dk2 <- kde(k2)
+  lmin <- mean(k1)
+  lmax <- mean(k2)
+  beta <- slope(rho, costs)
+  fx <- function(x) predict(dk2, x=x)-beta*predict(dk1, x=x)
+  out <- uniroot(fx, c(lmin, lmax))
+  
+  # results
+  re <- list(thres=out$root, prev=rho.origin, costs=costs.origin, R=beta, method="smooth", k1=k1.origin, k2=k2.origin)
+
+  return(re)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #############################################################
 ## Print function for class "thres2"
@@ -419,6 +505,27 @@ print.thres2 <- function(x, ...){
     cat("\nEstimate:")
     cat("\n  Threshold: ", x$T$thres)
     cat("\n  Minimum Cost: ", x$T$cost)
+    if (!is.null(x$CI)){
+      cat("\n")
+      cat("\nConfidence intervals (bootstrap):")
+      cat("\n  CI based on normal distribution:", x$CI$low.norm, " - ", x$CI$up.norm)
+      cat("\n  CI based on percentiles:", x$CI$low.perc, " - ", x$CI$up.perc)
+      cat("\n  Bootstrap resamples:", x$CI$B)
+    }
+    cat("\n")
+    cat("\nParameters used:")
+    cat("\n  Disease prevalence:", x$T$prev)
+    cat("\n  Costs (Ctp, Cfp, Ctn, Cfn):", x$T$costs)
+    cat("\n  R:", x$T$R)
+    cat("\n  Method:", x$T$method)
+    if (!is.null(x$CI)){
+      cat("\n  Significance Level:", x$CI$alpha)
+    }
+    cat("\n")
+  }
+  if (x$T$method == "smooth"){
+    cat("\nEstimate:")
+    cat("\n  Threshold: ", x$T$thres)
     if (!is.null(x$CI)){
       cat("\n")
       cat("\nConfidence intervals (bootstrap):")
@@ -538,23 +645,42 @@ getParams <- function(k, dist){
 #####            be stripped before the computation proceeds. Default, FALSE.
 ##### value: the threshold estimated
 ##########################################################################
-thres2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE), method=c("equal", "unequal", "empirical", "parametric"), dist1=NULL, dist2=NULL, ci=TRUE, ci.method=c("delta", "boot"), B=1000, alpha=0.05, extra.info=FALSE, na.rm=FALSE, q1=0.05, q2=0.95){
+thres2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE), R=NULL, method=c("equal", "unequal", "empirical", "smooth", "parametric"), dist1=NULL, dist2=NULL, ci=TRUE, ci.method=c("delta", "boot"), B=1000, alpha=0.05, extra.info=FALSE, na.rm=FALSE, q1=0.05, q2=0.95){
   # error handling
   if (!(rho > 0 & rho < 1)){
     stop("The disease prevalence 'rho' must be a number in (0,1)")
   }
-  if (!is.matrix(costs)){
-    stop("'costs' must be a matrix")
-  }
-  if (dim(costs)[1] != 2 | dim(costs)[2] != 2){
-    stop("'costs' must be a 2x2 matrix")
-  }
+  # if (!is.matrix(costs)){
+  #   stop("'costs' must be a matrix")
+  # }
+  # if (dim(costs)[1] != 2 | dim(costs)[2] != 2){
+  #   stop("'costs' must be a 2x2 matrix")
+  # }
   if (!is.numeric(k1) | !is.numeric(k2)){
     stop("'k1' and 'k2' must be numeric vectors")
   }
   if (!is.logical(ci) | is.na(ci)){
     stop("'ci' must be TRUE or FALSE")
   }
+  # costs or R
+  if (is.null(costs) & is.null(R)){
+    stop("Both 'costs' and 'R' are NULL. Please specify one of them.")
+  }else if (!is.null(costs) & !is.null(R)){
+    stop("Either 'costs' or 'R' must be NULL")
+  }else if (is.null(costs) & !is.null(R)){
+    if (!is.numeric(R) | length(R)!=1){
+      stop("R must be a single number")
+    }
+    costs <- matrix(c(0, 0, 1, (1-rho)/(R*rho)), 2, 2, byrow=TRUE)
+  }else if (!is.null(costs) & is.null(R)){
+    if (!is.matrix(costs)){
+      stop("'costs' must be a matrix")
+    }
+    if (dim(costs)[1] != 2 | dim(costs)[2] != 2){
+      stop("'costs' must be a 2x2 matrix")
+    }
+  }
+  
   # NAs handling
   if (na.rm){
     k1 <- k1[!is.na(k1)]
@@ -596,6 +722,17 @@ thres2 <- function(k1, k2, rho, costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byro
     T <- thresEmp2(k1, k2, rho, costs, extra.info)
     if (ci){
       CI <- icEmp2(k1, k2, rho, costs, T$thres, B=B, a=alpha)
+    }else{
+      CI <- NULL
+    }
+  }
+  if (method=="smooth"){
+    if (ci.method=="delta" & ci){
+      stop("When method='smooth', CIs cannot be computed based on delta method (choose ci.method='boot')")
+    }
+    T <- thresSmooth2(k1, k2, rho, costs)
+    if (ci){
+      CI <- icSmooth2(k1, k2, rho, costs, T$thres, B=B, a=alpha)
     }else{
       CI <- NULL
     }
@@ -1052,6 +1189,52 @@ icEmp2 <- function(k1,k2,rho,costs=matrix(c(0,0,1,(1-rho)/rho),2,2, byrow=TRUE),
   return(re)
 }
 
+##################################################################################
+##################################################################################
+################    BOOTSTRAP CONFIDENCE INTERVAL
+################    SMOOTH
+##################################################################################
+############           1) BOOTSTRAP VERSION OF S.E.- NORMAL
+############           2) BOOTSTRAP PERCENTILE
+##### arguments:  k1=vector containing the healthy sample values 
+#####		   	      k2=vector containing the diseased sample values 
+#####		   	      B=number of bootstrap resamples
+#####		   	      a=significance level
+#####		   	      rho=disease prevalence
+#####		  	      costs=cost matrix
+##### value: the 2 interval limits
+##################################################################################
+icSmooth2 <- function(k1,k2,rho,costs=matrix(c(0,0,1,(1-rho)/rho),2,2, byrow=TRUE),Thres,B=500,a=0.05){
+  if(mean(k1)>mean(k2)){
+    rho <- 1-rho
+    costs <- costs[, 2:1] # change c.t.pos <-> c.t.neg and c.f.pos <-> c.f.neg
+    g <- k1; k1 <- k2; k2 <- g
+  }
+  
+  t <- resample2(k1, k2, B)
+  t0 <- t[[1]]
+  t1 <- t[[2]]
+  
+  cut <- rep(NA,B)	
+  cut <- suppressWarnings(sapply(1:B,function(j){thresSmooth2(t0[,j],t1[,j],rho,costs)[[1]]}))
+  
+  est.se <- sd(cut)
+  
+  ###### 1) NORMAL-BOOTSTRAP SE
+  norm <- c(Thres+qnorm(a/2)*est.se, Thres+qnorm(1-a/2)*est.se)
+  
+  ###### 2) PERCENTILE
+  percentil <- (c(quantile(cut,a/2), quantile(cut,1-a/2)))
+  
+  # results
+  re <- list(low.norm=norm[1], up.norm=norm[2], se=est.se, low.perc=percentil[1], up.perc=percentil[2], alpha=a, B=B, ci.method="boot")
+  return(re)
+}
+
+
+
+
+
 ################################################################################
 ############       DATA GENERATION
 ############    PARAMETRIC RESAMPLING
@@ -1134,6 +1317,42 @@ plotCostROC <- function(x, type="l", ...){
     stop("'x' must be a 'thres2' or 'thres3' object")
   }
   if (class(x)=="thres2"){ # 2 states
+    if (x$T$method == "smooth"){
+      k1 <- x$T$k1; k2 <- x$T$k2; rho <- x$T$prev; costs <- x$T$costs
+      # changes
+      changed <- FALSE
+      if (mean(k1)>mean(k2)){
+        rho <- 1-rho
+        costs <- costs[, 2:1] # change c.t.pos <-> c.t.neg and c.f.pos <-> c.f.neg
+        g <- k1; k1 <- k2; k2 <- g
+        changed <- TRUE
+      }
+      # plot limits
+      k <- c(x$T$k1, x$T$k2)
+      rangex <- range(k)
+      xlim <- c(floor(rangex[1]), ceiling(rangex[2]))
+      # plot 1: cost function
+      y <- thres2(x$T$k1, x$T$k2, x$T$prev, x$T$costs, method="empirical", extra.info=TRUE, ci=FALSE)
+      xx <- y$T$tot.thres
+      yy <- y$T$tot.cost
+      lo <- loess(yy~xx)
+      pred <- predict(lo)
+      plot(xx, yy, xlim=xlim, ylim=c(min(pred), max(pred)), type="n", xlab="t", ylab="cost(t)")
+      lines(xx, pred, ...)
+      par(ask=T)
+      # plot 2: ROC curve
+      CUT <- x$T$thres
+      if (!changed){
+        resp.CUT <- ifelse(k<CUT, 0, 1)
+      }else{
+        resp.CUT <- ifelse(k>CUT, 0, 1)
+      }   
+      resp <- c(rep(0, length(x$T$k1)), rep(1, length(x$T$k2)))
+      resp.CUT <- factor(resp.CUT, c("0", "1"))
+      roc <- roc(response=resp, predictor=k, quiet=TRUE)
+      plot(smooth(roc))
+      par(ask=F)
+    }
     if (x$T$method == "empirical"){
       if (length(x$T) != 14){
         stop("use argument 'extra.info = TRUE' in 'thres2()'")
@@ -1241,7 +1460,7 @@ plotCostROC <- function(x, type="l", ...){
       SENS <- tab[1, 1]/(tab[1, 1]+tab[2, 1])
       SPEC <- tab[2, 2]/(tab[2, 2]+tab[1, 2])
       points(SPEC, SENS, col=2, pch=19)
-      par(ask=F)   
+      par(ask=F)  
     }
      if (x$T$method=="parametric"){
        k1 <- x$T$k1; k2 <- x$T$k2; rho <- x$T$prev; costs <- x$T$costs
@@ -1600,17 +1819,17 @@ parDerVarNonDisUn <- function(par1.1,par1.2,par2.1,par2.2,rho,costs){
 #####  rho=disease prevalence
 #####  costs=cost matrix
 ##########################################################################
-SS <- function(par1.1, par1.2, par2.1, par2.2=NULL, rho, width, costs=matrix(c(0,0,1,(1-rho)/rho),2,2, byrow=TRUE), var.equal=FALSE, alpha=0.05){
+SS <- function(par1.1, par1.2, par2.1, par2.2=NULL, rho, width, costs=matrix(c(0,0,1,(1-rho)/rho),2,2, byrow=TRUE), R=NULL, var.equal=FALSE, alpha=0.05){
   # error handling
   if (!(rho > 0 & rho < 1)){
     stop("The disease prevalence rho must be a number in (0,1)")
   }
-  if (!is.matrix(costs)){
-    stop("'costs' must be a matrix")
-  }
-  if (dim(costs)[1] != 2 | dim(costs)[2] != 2){
-    stop("'costs' must be a 2x2 matrix")
-  }
+  # if (!is.matrix(costs)){
+  #   stop("'costs' must be a matrix")
+  # }
+  # if (dim(costs)[1] != 2 | dim(costs)[2] != 2){
+  #   stop("'costs' must be a 2x2 matrix")
+  # }
   if (width<=0){
     stop("'width' must be a positive number")
   }
@@ -1633,6 +1852,25 @@ SS <- function(par1.1, par1.2, par2.1, par2.2=NULL, rho, width, costs=matrix(c(0
       stop("'var.equal' is set to FALSE, but par1.2==par2.2")
     }
   }
+  # costs or R
+  if (is.null(costs) & is.null(R)){
+    stop("Both 'costs' and 'R' are NULL. Please specify one of them.")
+  }else if (!is.null(costs) & !is.null(R)){
+    stop("Either 'costs' or 'R' must be NULL")
+  }else if (is.null(costs) & !is.null(R)){
+    if (!is.numeric(R) | length(R)!=1){
+      stop("R must be a single number")
+    }
+    costs <- matrix(c(0, 0, 1, (1-rho)/(R*rho)), 2, 2, byrow=TRUE)
+  }else if (!is.null(costs) & is.null(R)){
+    if (!is.matrix(costs)){
+      stop("'costs' must be a matrix")
+    }
+    if (dim(costs)[1] != 2 | dim(costs)[2] != 2){
+      stop("'costs' must be a 2x2 matrix")
+    }
+  }
+  
   costs.origin <- costs
   rho.origin <- rho
   par1.1.origin <- par1.1

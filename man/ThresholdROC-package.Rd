@@ -12,8 +12,8 @@ The ThresholdROC package provides point and interval estimations of the optimum 
 \tabular{ll}{
 Package: \tab ThresholdROC\cr
 Type: \tab Package\cr
-Version: \tab 2.8.3\cr
-Date: \tab 2020-09-28\cr
+Version: \tab 2.9.0\cr
+Date: \tab 2021-07-30\cr
 License: \tab GPL (>= 2)\cr
 }
 The most important functions are \code{thres2} and \code{thres3}. They offer a wide range of options for threshold estimation and inference in two and three state settings. We also include the function \code{diagnostic}, which calculates common measures of the accuracy of diagnostic tests involving 2x2 contingency tables of classification results.

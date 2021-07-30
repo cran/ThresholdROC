@@ -10,7 +10,8 @@ This function calculates the threshold estimate and its corresponding confidence
 \usage{
 thres2(k1, k2, rho,
   costs = matrix(c(0, 0, 1, (1 - rho)/rho), 2, 2, byrow = TRUE),
-  method = c("equal", "unequal", "empirical", "parametric"),
+  R=NULL,
+  method = c("equal", "unequal", "empirical", "smooth", "parametric"),
   dist1 = NULL, dist2 = NULL, ci = TRUE, ci.method = c("delta", "boot"),
   B = 1000, alpha = 0.05, extra.info = FALSE, na.rm = FALSE, q1=0.05, q2=0.95)
 }
@@ -26,7 +27,10 @@ vector containing the diseased sample values.
 disease prevalence.
 }
   \item{costs}{
-cost matrix. Costs should be entered as a 2x2 matrix, where the first row corresponds to the true positive and true negative costs and the second row to the false positive and false negative costs. Default cost values are a combination of costs that yields R=1, which would be the equivalent to the Youden index method (for details about this concept, see \bold{References}).
+cost matrix. Costs should be entered as a 2x2 matrix, where the first row corresponds to the true positive and true negative costs and the second row to the false positive and false negative costs. Default cost values are a combination of costs that yields R=1, which is equivalent to the Youden index method (for details about this concept, see \bold{References}). It must be set to \code{NULL} if the user prefers to set \code{R} (see next argument).
+}
+  \item{R}{
+if the cost matrix \code{costs} is not set, R desired (the algorithm will choose a suitable combination of costs that leads to \code{R}). Default, \code{NULL} (which leads to R=1 using the default \code{costs}).
 }
   \item{method}{
 method used in the estimation. The user can specify just the initial letters. Default, \code{"equal"}. See \bold{Details} for more information about the methods available.
@@ -65,7 +69,7 @@ probability of the right distribution in order to determine a high quantile when
 }
 }
 \details{
-For parameter \code{method} the user can choose between \code{"equal"} (assumes binormality and equal variances), \code{"unequal"} (assumes binormality and unequal variances), \code{"empirical"} (leaves out any distributional assumption) or \code{"parametric"} (based on the distribution assumed for the two populations).
+For parameter \code{method} the user can choose between \code{"equal"} (assumes binormality and equal variances), \code{"unequal"} (assumes binormality and unequal variances), \code{"empirical"} (leaves out any distributional assumption), \code{"smooth"} (leaves out any distributional assumption, but uses a kernel to estimate the densities) or \code{"parametric"} (based on the distribution assumed for the two populations).
 
 Parameters \code{dist1} and \code{dist2} can be chosen between the following 2-parameter distributions: \code{"beta"}, \code{"cauchy"}, \code{"chisq"} (chi-squared), \code{"gamma"}, \code{"lnorm"} (lognormal), \code{"logis"} (logistic), \code{"norm"} (normal) and \code{"weibull"}. Notice that \code{dist1} and \code{dist2} are only needed when \code{method = "parametric"}.
 
@@ -178,6 +182,8 @@ k2 <- rnorm(n2, par2.1, par2.2) # diseased
 
 thres2(k1, k2, rho, method="eq", ci.method="d")
 thres2(k1, k2, rho, method="uneq", ci.method="d")
+# specify R instead of (default) costs
+thres2(k1, k2, rho, costs=NULL, R=2, method="uneq", ci.method="d")
 \dontrun{
 thres2(k1, k2, rho, method="empirical", ci.method="b")
 
@@ -192,6 +198,21 @@ thres2(k1, k2, rho, method="param", ci.method="boot", dist1="norm", dist2="lnorm
 # supress confidence intervals calculation
 thres2(k1, k2, rho, method="equal", ci=FALSE)
 thres2(k1, k2, rho, method="empirical", ci=FALSE)
+
+# example 3
+n1 <- 100
+n2 <- 100
+set.seed(1234)
+par1.1 <- 0
+par1.2 <- 1
+par2.1 <- 2
+par2.2 <- 1
+rho <- 0.2
+k1 <- rnorm(n1, par1.1, par1.2) # non-diseased
+k2 <- rnorm(n2, par2.1, par2.2) # diseased
+\dontrun{
+thres2(k1, k2, rho, method="smooth", ci.method="b")
+}
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
