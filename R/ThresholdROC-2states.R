@@ -208,7 +208,7 @@ print.thresTH2 <- function(x, ...){
 ##########################################################################
 secondDer2 <- function(x){
   # error handling
-  if (class(x) != "thres2"){
+  if (!inherits(x, "thres2")){
     stop("'x' must be of class 'thres2'")
   }
   # function
@@ -1311,12 +1311,15 @@ icBootTH <- function(dist1, dist2, par1.1, par1.2, par2.1, par2.2, n1, n2, rho, 
 ######        x: 'thres2' or 'thres3' object 
 ######        type: type of pline for plots
 ##################################################################################
-plotCostROC <- function(x, type="l", ...){
+plotCostROC <- function(x, type="l", which.plot=c("both", "cost", "roc"), ...){
+  which.plot <- match.arg(which.plot)
   # error handling
-  if (!(class(x) %in% c("thres2", "thres3"))){
+  if (!inherits(x, c("thres2", "thres3"))){
     stop("'x' must be a 'thres2' or 'thres3' object")
   }
-  if (class(x)=="thres2"){ # 2 states
+  oldpar <- par(no.readonly=TRUE)
+  on.exit(par(oldpar))
+  if (inherits(x, "thres2")){ # 2 states
     if (x$T$method == "smooth"){
       k1 <- x$T$k1; k2 <- x$T$k2; rho <- x$T$prev; costs <- x$T$costs
       # changes
@@ -1331,41 +1334,50 @@ plotCostROC <- function(x, type="l", ...){
       k <- c(x$T$k1, x$T$k2)
       rangex <- range(k)
       xlim <- c(floor(rangex[1]), ceiling(rangex[2]))
-      # plot 1: cost function
-      y <- thres2(x$T$k1, x$T$k2, x$T$prev, x$T$costs, method="empirical", extra.info=TRUE, ci=FALSE)
-      xx <- y$T$tot.thres
-      yy <- y$T$tot.cost
-      lo <- loess(yy~xx)
-      pred <- predict(lo)
-      plot(xx, yy, xlim=xlim, ylim=c(min(pred), max(pred)), type="n", xlab="t", ylab="cost(t)")
-      lines(xx, pred, ...)
-      par(ask=T)
-      # plot 2: ROC curve
-      CUT <- x$T$thres
-      if (!changed){
-        resp.CUT <- ifelse(k<CUT, 0, 1)
-      }else{
-        resp.CUT <- ifelse(k>CUT, 0, 1)
-      }   
-      resp <- c(rep(0, length(x$T$k1)), rep(1, length(x$T$k2)))
-      resp.CUT <- factor(resp.CUT, c("0", "1"))
-      roc <- roc(response=resp, predictor=k, quiet=TRUE)
-      plot(smooth(roc))
-      par(ask=F)
+      if (which.plot %in% c("both", "cost")){
+        # plot 1: cost function
+        y <- suppressWarnings(thres2(x$T$k1, x$T$k2, x$T$prev, x$T$costs, method="empirical", extra.info=TRUE, ci=FALSE))
+        xx <- y$T$tot.thres
+        yy <- y$T$tot.cost
+        lo <- loess(yy~xx)
+        pred <- predict(lo)
+        plot(xx, yy, xlim=xlim, ylim=c(min(pred), max(pred)), type="n", xlab="t", ylab="cost(t)")
+        lines(xx, pred, ...)
+        points(x$T$thres, predict(lo, x$T$thres), col=2, pch=19)
+      }
+      if (which.plot %in% c("both", "roc")){
+        if (which.plot=="both") par(ask=T)
+        # plot 2: ROC curve
+        CUT <- x$T$thres
+        if (!changed){
+          resp.CUT <- ifelse(k<CUT, 0, 1)
+        }else{
+          resp.CUT <- ifelse(k>CUT, 0, 1)
+        }   
+        resp <- c(rep(0, length(x$T$k1)), rep(1, length(x$T$k2)))
+        resp.CUT <- factor(resp.CUT, c("0", "1"))
+        roc <- smooth(roc(response=resp, predictor=k, quiet=TRUE))
+        plot(roc)
+        if (which.plot=="both") par(ask=F)
+      }
     }
     if (x$T$method == "empirical"){
       if (length(x$T) != 14){
         stop("use argument 'extra.info = TRUE' in 'thres2()'")
       }
       # plots
-      # plot 1: empirical cost function
-      plot(x$T$tot.thres, x$T$tot.cost, xlab="Threshold", ylab="Cost", main="Empirical Cost function", type=type, ...)
-      points(x$T$thres, x$T$cost, col=2, pch=19)
-      par(ask=T)
-      # plot 2: empirical ROC curve
-      plot(1-x$T$tot.spec,x$T$tot.sens, main="Empirical ROC curve", xlab="1-Specificity", ylab="Sensitivity", type=type, ...)
-      points(1-x$T$spec, x$T$sens, col=2, pch=19)
-      par(ask=F)
+      if (which.plot %in% c("both", "cost")){
+        # plot 1: empirical cost function
+        plot(x$T$tot.thres, x$T$tot.cost, xlab="Threshold", ylab="Cost", main="Empirical Cost function", type=type, ...)
+        points(x$T$thres, x$T$cost, col=2, pch=19)
+      }
+      if (which.plot %in% c("both", "roc")){
+        if (which.plot=="both") par(ask=T)
+        # plot 2: empirical ROC curve
+        plot(1-x$T$tot.spec,x$T$tot.sens, main="Empirical ROC curve", xlab="1-Specificity", ylab="Sensitivity", type=type, ...)
+        points(1-x$T$spec, x$T$sens, col=2, pch=19)
+        if (which.plot=="both") par(ask=F)
+      }
     }
     if (x$T$method =="equal"){
       k1 <- x$T$k1; k2 <- x$T$k2; rho <- x$T$prev; costs <- x$T$costs
@@ -1392,27 +1404,31 @@ plotCostROC <- function(x, type="l", ...){
         C <- n*(TP*costs[1,1]+FN*costs[2, 2]+FP*costs[2, 1]+TN*costs[1, 2])
         return(as.numeric(C))
       }
-      # plot 1: cost function
-      plot(cost, xlim=xlim, type=type, xlab="t", ylab="cost(t)", ...)
-      points(x$T$thres, cost(x$T$thres), col=2, pch=19)
-      par(ask=T)
-      # plot 2: ROC curve
-      CUT <- x$T$thres
-      if (!changed){
-        resp.CUT <- ifelse(k<CUT, 0, 1)
-      }else{
-        resp.CUT <- ifelse(k>CUT, 0, 1)
-      }   
-      resp <- c(rep(0, length(x$T$k1)), rep(1, length(x$T$k2)))
-      resp.CUT <- factor(resp.CUT, c("0", "1"))
-      roc <- roc(response=resp, predictor=k, quiet=TRUE)
-      plot(roc)
-      # add sens and spec given by the threshold
-      tab <- table(resp.CUT, resp)[2:1, 2:1]
-      SENS <- tab[1, 1]/(tab[1, 1]+tab[2, 1])
-      SPEC <- tab[2, 2]/(tab[2, 2]+tab[1, 2])
-      points(SPEC, SENS, col=2, pch=19)       
-      par(ask=F)    
+      if (which.plot %in% c("both", "cost")){
+        # plot 1: cost function
+        plot(cost, xlim=xlim, type=type, xlab="t", ylab="cost(t)", ...)
+        points(x$T$thres, cost(x$T$thres), col=2, pch=19)
+      }
+      if (which.plot %in% c("both", "roc")){
+        if (which.plot=="both") par(ask=T)
+        # plot 2: ROC curve
+        CUT <- x$T$thres
+        if (!changed){
+          resp.CUT <- ifelse(k<CUT, 0, 1)
+        }else{
+          resp.CUT <- ifelse(k>CUT, 0, 1)
+        }   
+        resp <- c(rep(0, length(x$T$k1)), rep(1, length(x$T$k2)))
+        resp.CUT <- factor(resp.CUT, c("0", "1"))
+        roc <- roc(response=resp, predictor=k, quiet=TRUE)
+        plot(roc)
+        # add sens and spec given by the threshold
+        tab <- table(resp.CUT, resp)[2:1, 2:1]
+        SENS <- tab[1, 1]/(tab[1, 1]+tab[2, 1])
+        SPEC <- tab[2, 2]/(tab[2, 2]+tab[1, 2])
+        points(SPEC, SENS, col=2, pch=19)       
+        if (which.plot=="both") par(ask=F)
+      }
     }
     if (x$T$method=="unequal"){
       k1 <- x$T$k1; k2 <- x$T$k2; rho <- x$T$prev; costs <- x$T$costs
@@ -1440,29 +1456,33 @@ plotCostROC <- function(x, type="l", ...){
         C <- n*(TP*costs[1,1]+FN*costs[2, 2]+FP*costs[2, 1]+TN*costs[1, 2])
         return(as.numeric(C))
       }
-      # plot 1: cost function
-      plot(cost, xlim=xlim, type=type, xlab="t", ylab="cost(t)", ...)
-      points(x$T$thres, cost(x$T$thres), col=2, pch=19)
-      par(ask=T)
-      # plot 2: ROC curve
-      CUT <- x$T$thres
-      if (!changed){
-        resp.CUT <- ifelse(k<CUT, 0, 1)
-      }else{
-        resp.CUT <- ifelse(k>CUT, 0, 1)
-      }   
-      resp <- c(rep(0, length(x$T$k1)), rep(1, length(x$T$k2)))
-      resp.CUT <- factor(resp.CUT, c("0", "1"))
-      roc <- roc(response=resp, predictor=k, quiet=TRUE)
-      plot(roc)
-      # add sens and spec given by the threshold
-      tab <- table(resp.CUT, resp)[2:1, 2:1]
-      SENS <- tab[1, 1]/(tab[1, 1]+tab[2, 1])
-      SPEC <- tab[2, 2]/(tab[2, 2]+tab[1, 2])
-      points(SPEC, SENS, col=2, pch=19)
-      par(ask=F)  
+      if (which.plot %in% c("both", "cost")){
+        # plot 1: cost function
+        plot(cost, xlim=xlim, type=type, xlab="t", ylab="cost(t)", ...)
+        points(x$T$thres, cost(x$T$thres), col=2, pch=19)
+      }
+      if (which.plot %in% c("both", "roc")){
+        if (which.plot=="both") par(ask=T)
+          # plot 2: ROC curve
+        CUT <- x$T$thres
+        if (!changed){
+          resp.CUT <- ifelse(k<CUT, 0, 1)
+        }else{
+          resp.CUT <- ifelse(k>CUT, 0, 1)
+        }   
+        resp <- c(rep(0, length(x$T$k1)), rep(1, length(x$T$k2)))
+        resp.CUT <- factor(resp.CUT, c("0", "1"))
+        roc <- roc(response=resp, predictor=k, quiet=TRUE)
+        plot(roc)
+        # add sens and spec given by the threshold
+        tab <- table(resp.CUT, resp)[2:1, 2:1]
+        SENS <- tab[1, 1]/(tab[1, 1]+tab[2, 1])
+        SPEC <- tab[2, 2]/(tab[2, 2]+tab[1, 2])
+        points(SPEC, SENS, col=2, pch=19)
+        if (which.plot=="both") par(ask=F)
+      }
     }
-     if (x$T$method=="parametric"){
+    if (x$T$method=="parametric"){
        k1 <- x$T$k1; k2 <- x$T$k2; rho <- x$T$prev; costs <- x$T$costs
        dist1 <- x$T$dist1; dist2 <- x$T$dist2
        par1.1 <- x$T$pars1[1]; par1.2 <- x$T$pars1[2]; par2.1 <- x$T$pars2[1]; par2.2 <- x$T$pars2[2]
@@ -1491,27 +1511,31 @@ plotCostROC <- function(x, type="l", ...){
          C <- n*(TP*costs[1,1]+FN*costs[2, 2]+FP*costs[2, 1]+TN*costs[1, 2])
          return(as.numeric(C))
        }
-       # plot 1: cost function
-       plot(cost, xlim=xlim, type=type, xlab="t", ylab="cost(t)", ...)
-       points(x$T$thres, cost(x$T$thres), col=2, pch=19)
-       par(ask=T)
-       # plot 2: ROC curve
-       CUT <- x$T$thres
-       if (!changed){
-         resp.CUT <- ifelse(k<CUT, 0, 1)
-       }else{
-         resp.CUT <- ifelse(k>CUT, 0, 1)
-       }   
-       resp <- c(rep(0, length(x$T$k1)), rep(1, length(x$T$k2)))
-       resp.CUT <- factor(resp.CUT, c("0", "1"))
-       roc <- roc(response=resp, predictor=k, quiet=TRUE)
-       plot(roc)
-       # add sens and spec given by the threshold
-       tab <- table(resp.CUT, resp)[2:1, 2:1]
-       SENS <- tab[1, 1]/(tab[1, 1]+tab[2, 1])
-       SPEC <- tab[2, 2]/(tab[2, 2]+tab[1, 2])
-       points(SPEC, SENS, col=2, pch=19)
-       par(ask=F) 
+       if (which.plot %in% c("both", "cost")){
+         # plot 1: cost function
+         plot(cost, xlim=xlim, type=type, xlab="t", ylab="cost(t)", ...)
+         points(x$T$thres, cost(x$T$thres), col=2, pch=19)
+       }
+       if (which.plot %in% c("both", "roc")){
+         if (which.plot=="both") par(ask=T)
+         # plot 2: ROC curve
+         CUT <- x$T$thres
+         if (!changed){
+           resp.CUT <- ifelse(k<CUT, 0, 1)
+         }else{
+           resp.CUT <- ifelse(k>CUT, 0, 1)
+         }   
+         resp <- c(rep(0, length(x$T$k1)), rep(1, length(x$T$k2)))
+         resp.CUT <- factor(resp.CUT, c("0", "1"))
+         roc <- roc(response=resp, predictor=k, quiet=TRUE)
+         plot(roc)
+         # add sens and spec given by the threshold
+         tab <- table(resp.CUT, resp)[2:1, 2:1]
+         SENS <- tab[1, 1]/(tab[1, 1]+tab[2, 1])
+         SPEC <- tab[2, 2]/(tab[2, 2]+tab[1, 2])
+         points(SPEC, SENS, col=2, pch=19)
+         if (which.plot=="both") par(ask=F)
+       }
      }
   }else{ # 3-states
     k <- c(x$T$k1, x$T$k2, x$T$k3)

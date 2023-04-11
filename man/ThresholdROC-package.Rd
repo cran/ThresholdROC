@@ -9,13 +9,6 @@ Optimum threshold estimation based on cost function in a two- and three- state s
 The ThresholdROC package provides point and interval estimations of the optimum threshold as well as graphical tools for continuous diagnostic tests (two- and three- state settings). The point estimation is based on the definition of a cost function which we opt to minimise. An analytical estimator is available for the binormal and trinormal model and the empirical one is used for all settings. The interval estimation is based on the Delta method variance estimator in a binormal parametric setting and on methods on non-linear equations for the trinormal setting. Bootstrap methods are also provided for the confidence intervals.
 }
 \details{
-\tabular{ll}{
-Package: \tab ThresholdROC\cr
-Type: \tab Package\cr
-Version: \tab 2.9.0\cr
-Date: \tab 2021-07-30\cr
-License: \tab GPL (>= 2)\cr
-}
 The most important functions are \code{thres2} and \code{thres3}. They offer a wide range of options for threshold estimation and inference in two and three state settings. We also include the function \code{diagnostic}, which calculates common measures of the accuracy of diagnostic tests involving 2x2 contingency tables of classification results.
 }
 \author{

@@ -5,6 +5,7 @@ export(thresTH2, thres2, secondDer2, plotCostROC, SS, thresTH3, thres3, secondDe
 importFrom(MASS, fitdistr)
 importFrom(numDeriv, grad)
 importFrom(pROC, roc)
+importFrom(pROC, smooth)
 importFrom(graphics, abline)
 importFrom(stats, binom.test)
 importFrom(stats, density)
@@ -26,7 +27,6 @@ importFrom(stats, var)
 importFrom(ks, kde)
 importFrom(stats, predict)
 importFrom(stats, loess)
-importFrom(stats, smooth)
 
 
 # S3 methods

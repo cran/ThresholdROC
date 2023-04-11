@@ -2,13 +2,13 @@
 \alias{plotCostROC}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Plot ROC curve and cost function
+Plot cost function and ROC curve
 }
 \description{
 This function plots the ROC curve and the cost function associated to the disease prevalence and costs.
 }
 \usage{
-plotCostROC(x, type = "l", \dots)
+plotCostROC(x, type = "l", which.plot, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,6 +17,9 @@ an object of class \code{thres2} or \code{thres3}. See \bold{Details}.
 }
   \item{type}{
 1-character string giving the type of plot desired. Default, \code{"l"}. See \bold{Details}.
+}
+  \item{which.plot}{
+which plot should be produced? The user can choose between \code{"both"} (default, which plots both cost function and ROC curve), \code{"cost"} (only plots cost function) or \code{"roc"} (only plots ROC curve). It only applies to objects of class \code{thres2}, therefore this argument has no effect if \code{x} is an object of class \code{thres3}.
 }
 \item{\dots}{
 other graphical parameters to be passed to \code{plot()}.
