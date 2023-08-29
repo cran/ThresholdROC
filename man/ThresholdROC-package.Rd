@@ -1,6 +1,6 @@
 \name{ThresholdROC}
 \alias{ThresholdROC}
-\alias{ThresholdROC}
+\alias{ThresholdROC-package}
 \docType{package}
 \title{
 Optimum threshold estimation based on cost function in a two- and three- state settings
