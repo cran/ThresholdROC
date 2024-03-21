@@ -2,10 +2,10 @@
 \alias{diagnostic}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Diagnostic tests
+Diagnostic accuracy measures of binary diagnostic tests
 }
 \description{
-This function calculates common measures of accuracy of diagnostic tests involving 2x2 contingency tables of classification results (usually, test outcome versus status tables).
+This function estimates common accuracy measures for binary diagnostic tests involving 2x2 contingency tables of classification results (usually, test outcome versus status tables).
 }
 \usage{
 diagnostic(tab, method = c("par", "exact"),

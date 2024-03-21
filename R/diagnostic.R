@@ -196,21 +196,34 @@ diagnostic <- function(tab, method=c("par", "exact"), casecontrol=FALSE, p=NULL,
   YI.ic <- c(YI, YI - z*sqrt(var.YI), YI + z*sqrt(var.YI))
   
   # Accuracy (probability of a correct test result)
-  Acc <- (TP+TN)/(TP+FP+FN+TN)
-  # CI for accuracy
-  if (method=="par"){
-    Acc.ic <- c(Acc, prop.test(TP+TN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
-  }else if (method=="exact"){
-    Acc.ic <- c(Acc, binom.test(TP+TN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
+  if (!casecontrol){
+    Acc <- (TP+TN)/(TP+FP+FN+TN)
+    # CI for accuracy
+    if (method=="par"){
+      Acc.ic <- c(Acc, prop.test(TP+TN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
+    }else if (method=="exact"){
+      Acc.ic <- c(Acc, binom.test(TP+TN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
+    }
+  }else{
+    Acc <-  Se*p + Sp*(1-p)
+    # CI for accuracy: not implemented yet for case-control studies
+    Acc.ic <- c(Acc, NA, NA)
+    warning("CIs for accuracy and error rate in case-control studies are not implemented (yet)")
   }
   
-  # Error rate
-  ER <- (FP + FN)/(TP+TN+FP+FN)
-  # CI for error rate
-  if (method=="par"){
-    ER.ic <- c(ER, prop.test(FP+FN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
-  }else if (method=="exact"){
-    ER.ic <- c(ER, binom.test(FP+FN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
+  # Error rate (overall probability of misclassification)
+  if (!casecontrol){
+    ER <- (FP + FN)/(TP+TN+FP+FN)
+    # CI for error rate
+    if (method=="par"){
+      ER.ic <- c(ER, prop.test(FP+FN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
+    }else if (method=="exact"){
+      ER.ic <- c(ER, binom.test(FP+FN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
+    }
+  }else{
+    ER <- (1-Se)*p + (1-Sp)*(1-p)
+    # CI for error rate: not implemented yet for case-control studies
+    ER.ic <- c(ER, NA, NA)
   }
   
   # table of results
