@@ -1,7 +1,7 @@
-404064829c5d91bcdbafe6c82218ac00 *DESCRIPTION
+2cd662e21ee17a473191aea00af11677 *DESCRIPTION
 297f3901b3ad588cca12d73e7e44a5d5 *NAMESPACE
 79dec6cd5765089f45a71d6b9bb6064c *R/ThresholdROC-2states.R
-20b86fbd988b315b7aca748134d2bbe3 *R/ThresholdROC-3states.R
+1b98046cb2891eca1a593e6a29fd83ff *R/ThresholdROC-3states.R
 a8ed0614a4e11962d552150b5953b8da *R/diagnostic.R
 acc5d95b35a4bf708fee814d31acf543 *data/AD.txt.gz
 ba7d735751b8f1a6927c5474c121161f *data/chemo.txt.gz
@@ -17,7 +17,7 @@ a537b33798fe29a7b94d8e2d796ba0aa *man/diagnostic.Rd
 7b2d85ecea882369bed43cd6c6164ccc *man/plot-thres3.Rd
 12df23b62fb5dbdeb96eec0f6180badf *man/plotCostROC.Rd
 a63ef0cd38ccd538c1870f28d770cf1f *man/secondDer2.Rd
-a83a9aac3eaa8e1dce7da7471a94b39d *man/secondDer3.Rd
+b8794c4c62885f57d98f7b569a194d5e *man/secondDer3.Rd
 e6a479fea04733c3f7b2bb845b2a082f *man/thres2.Rd
 20691b3f283463cebf58328dcfa21c30 *man/thres3.Rd
 6e733c2ebaa25be9a6b7cb3afdffe8f3 *man/thresTH2.Rd

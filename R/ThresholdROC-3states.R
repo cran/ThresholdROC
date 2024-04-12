@@ -13,7 +13,7 @@
 ##########################################################################
 secondDer3 <- function(x){
   # error handling
-  if (inherits(x, "thres3")){
+  if (!inherits(x, "thres3")){
     stop("'x' must be of class 'thres3'")
   }  
   if (x$T$dist1=="norm" & x$T$dist2=="norm" & x$T$dist3=="norm"){

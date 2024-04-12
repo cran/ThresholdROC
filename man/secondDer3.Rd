@@ -32,7 +32,6 @@ Skaltsa K, Jover L, Fuster D, Carrasco JL. (2012). Optimum threshold estimation 
 \code{\link{thres3}}
 }
 \examples{
-\dontrun{
 set.seed(1234)
 n <- 100
 k1 <- rlnorm(n)
@@ -44,7 +43,6 @@ x <- thres3(k1, k2, k3, rho, dist1="norm", dist2="norm",
             dist3="norm", start=start, ci.method="param") 
 
 secondDer3(x)
-}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
