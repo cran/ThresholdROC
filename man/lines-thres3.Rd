@@ -9,7 +9,7 @@ The function includes vertical lines for the thresholds and confidence intervals
 }
 \usage{
 \method{lines}{thres3}(x, ci = TRUE, which.boot = c("norm", "perc"),
-  col = 1, lty = c(1, 2), lwd = 1, \dots)
+      col = 1, lty = c(1, 2), lwd = 1, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -64,17 +64,17 @@ rho <- c(1/3, 1/3, 1/3)
 
 # assuming trinormality
 start <- c(mean(k1), mean(k3))
-thres1 <- thres3(k1, k2, k3, rho, dist1="norm", dist2="norm",
-                 dist3="norm", start=start, ci.method="param") 
+thres1 <- thres3(k1, k2, k3, rho, dist1 = "norm", dist2 = "norm",
+                 dist3 = "norm", start = start, ci.method = "param") 
 
 # not assuming trinormality
 start2 <- c(0.05, 0.6, 0.5, 0.95)
 set.seed(2014)
-thres2 <- thres3(k1, k2, k3, rho, start=start2, B=1000,
-                ci.method="boot", dist1="lnorm", dist2="norm",
-                dist3="norm") 
-plot(thres2, leg.pos="topright", leg.cex=0.8, col=1:4)
-lines(thres1, col=5)
+thres2 <- thres3(k1, k2, k3, rho, start = start2, B = 1000,
+                ci.method = "boot", dist1 = "lnorm", dist2 = "norm",
+                dist3 = "norm") 
+plot(thres2, leg.pos = "topright", leg.cex = 0.8, col = 1:4)
+lines(thres1, col = 5)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

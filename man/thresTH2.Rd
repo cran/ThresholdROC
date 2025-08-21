@@ -8,8 +8,8 @@ This function estimates the theoretical optimum threshold for the specific distr
 }
 \usage{
 thresTH2(dist1, dist2, par1.1, par1.2, par2.1, par2.2, rho,
-  costs = matrix(c(0, 0, 1, (1 - rho)/rho), 2, 2, byrow = TRUE), 
-  R=NULL, q1 = 0.05, q2 = 0.95, tol = 10^(-8))
+         costs = matrix(c(0, 0, 1, (1 - rho)/rho), 2, 2, byrow = TRUE), 
+         R = NULL, q1 = 0.05, q2 = 0.95, tol = 10^(-8))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

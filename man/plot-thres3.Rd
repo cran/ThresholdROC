@@ -9,12 +9,12 @@ This function provides a graph including the three sample densities, the thresho
 }
 \usage{
 \method{plot}{thres3}(x, bw = c("nrd0", "nrd0", "nrd0"), ci = TRUE,
-  which.boot = c("norm", "perc"), col = c(1, 2, 3, 4),
-  lty = c(1, 1, 1, 1, 2), lwd = c(1, 1, 1, 1),
-  legend = TRUE, leg.pos = "topleft", leg.cex = 1,
-  xlim = NULL, ylim = NULL,
-  main = paste0("Threshold estimates", ifelse(ci, " and CIs", "")),
-  xlab = "", \dots)
+     which.boot = c("norm", "perc"), col = c(1, 2, 3, 4),
+     lty = c(1, 1, 1, 1, 2), lwd = c(1, 1, 1, 1),
+     legend = TRUE, leg.pos = "topleft", leg.cex = 1,
+     xlim = NULL, ylim = NULL,
+     main = paste0("Threshold estimates", ifelse(ci, " and CIs", "")),
+     xlab = "", \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -112,14 +112,14 @@ rho <- c(1/3, 1/3, 1/3)
 
 # assuming trinormality
 start <- c(mean(k1), mean(k3)) 
-thres <- thres3(k1, k2, k3, rho, dist1="norm", dist2="norm",
-                dist3="norm", start=start, ci.method="param") 
-plot(thres, leg.pos="topright")
+thres <- thres3(k1, k2, k3, rho, dist1 = "norm", dist2 = "norm",
+                dist3 = "norm", start = start, ci.method = "param") 
+plot(thres, leg.pos = "topright")
 
 # not assuming trinormality
-thres <- thres3(k1, k2, k3, rho, dist1="lnorm", dist2="norm",
-                dist3="norm", ci.method="boot") 
-plot(thres, leg.pos="topright", which.boot="perc")
+thres <- thres3(k1, k2, k3, rho, dist1 = "lnorm", dist2 = "norm",
+                dist3 = "norm", ci.method = "boot") 
+plot(thres, leg.pos = "topright", which.boot = "perc")
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

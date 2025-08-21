@@ -62,9 +62,10 @@ par2.2 <- 1
 rho <- 0.3
 k1 <- rnorm(n1, par1.1, par1.2) # non-diseased
 k2 <- rnorm(n2, par2.1, par2.2) # diseased
-x <- thres2(k1, k2, rho, method="emp", ci.method="boot", extra=TRUE)
+x <- thres2(k1, k2, rho, method = "emp", ci.method = "boot",
+            extra = TRUE)
 
-par(mfrow=c(1,2))
+par(mfrow=c(1, 2))
 plotCostROC(x)
 
 
@@ -75,9 +76,10 @@ k1 <- rlnorm(n)
 k2 <- rnorm(n, 3, 1)
 k3 <- rnorm(n, 5, 1)
 rho <- c(1/3, 1/3, 1/3)
-y <- thres3(k1, k2, k3, rho, B=1000, ci.method="boot", dist1="lnorm", dist2="norm", dist3="norm") 
+y <- thres3(k1, k2, k3, rho, B = 1000, ci.method = "boot",
+            dist1 = "lnorm", dist2 = "norm", dist3 = "norm") 
 
-par(mfrow=c(1,2))
+par(mfrow=c(1, 2))
 plotCostROC(y)
 }
 }

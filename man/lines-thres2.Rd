@@ -10,7 +10,7 @@ The function includes vertical lines for the threshold and confidence interval i
 
 \usage{
 \method{lines}{thres2}(x, ci = TRUE, which.boot = c("norm", "perc"),
-  col = 1, lty = c(1, 2), lwd = 1, \dots)
+      col = 1, lty = c(1, 2), lwd = 1, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -64,14 +64,14 @@ rho <- 0.2
 k1 <- rnorm(n1, par1.1, par1.2) # non-diseased
 k2 <- rnorm(n2, par2.1, par2.2) # diseased
 
-thres <- thres2(k1, k2, rho, method="eq", ci.method="d")
-plot(thres, col=c(1, 2, 4), lwd=c(2, 2, 1), leg.pos="topright")
-thresunequal <- thres2(k1, k2, rho, method="unequal", ci=FALSE)
-lines(thresunequal, col=3) # almost the same; no confidence interval
+thres <- thres2(k1, k2, rho, method = "eq", ci.method = "d")
+plot(thres, col = c(1, 2, 4), lwd = c(2, 2, 1), leg.pos = "topright")
+thresunequal <- thres2(k1, k2, rho, method = "unequal", ci = FALSE)
+lines(thresunequal, col = 3) # almost the same; no confidence interval
 
 \dontrun{
-  thresboot <- thres2(k1, k2, rho, method="emp", ci.method="b")
-  lines(thresboot, col=5, which.boot="norm")
+  thresboot <- thres2(k1, k2, rho, method = "emp", ci.method = "b")
+  lines(thresboot, col = 5, which.boot = "norm")
 }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

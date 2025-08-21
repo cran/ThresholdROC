@@ -9,10 +9,11 @@ This function calculates the threshold estimates and their corresponding confide
 }
 \usage{
 thres3(k1, k2, k3, rho,
-  costs = matrix(c(0, 1, 1, rho[1]/rho[2], 0, rho[3]/rho[2], 1, 1, 0),
-  3, 3, byrow = TRUE), dist1 = "norm", dist2 = "norm",
-  dist3 = "norm", start = NULL, ci = TRUE, ci.method = c("param", "boot"),
-  B = 1000, alpha = 0.05, na.rm = FALSE)
+       costs = matrix(c(0, 1, 1, rho[1]/rho[2], 0, rho[3]/rho[2], 1, 1, 0),
+                      3, 3, byrow = TRUE), dist1 = "norm", dist2 = "norm",
+       dist3 = "norm", start = NULL, ci = TRUE,
+       ci.method = c("param", "boot"), B = 1000, alpha = 0.05,
+       na.rm = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -69,76 +70,90 @@ When at least one of the distributions is not \code{"norm"}, the function intern
 
 \value{
 An object of class \code{thres3}, which is a list with two components:
-\item{T}{a list of at least ten components:
+\item{.}{\code{T}, which is a list of at least ten components:
+  \itemize{
+    \item{\code{thres1}  first threshold estimate.}
 
-  \code{thres1}  first threshold estimate.
+    \item{\code{thres2}  second threshold estimate.}
 
-  \code{thres2}  second threshold estimate.
-
-  \code{prev}  prevalences provided by the user.
+    \item{\code{prev}  prevalences provided by the user.}
   
-  \code{costs}  cost matrix provided by the user.
+    \item{\code{costs}  cost matrix provided by the user.}
     
-  \code{k1}  vector containing the first sample values provided by the user.
+    \item{\code{k1}  vector containing the first sample values provided by the user.}
   
-  \code{k2}  vector containing the second sample values provided by the user.
+    \item{\code{k2}  vector containing the second sample values provided by the user.}
 
-  \code{k3}  vector containing the third sample values provided by the user.
+    \item{\code{k3}  vector containing the third sample values provided by the user.}
   
-  \code{dist1}  distribution assumed for the first population.
+    \item{\code{dist1}  distribution assumed for the first population.}
   
-  \code{dist2}  distribution assumed for the second population.
+    \item{\code{dist2}  distribution assumed for the second population.}
   
-  \code{dist3}  distribution assumed for the third population.
+    \item{\code{dist3}  distribution assumed for the third population.}
+  
+  }
   
   When not all distributions are normal, \code{T} also contains:
   
-  \code{pars1}  a numeric vector containing the estimation of the parameters of \code{dist1}.
+  \itemize{
   
-  \code{pars2}  a numeric vector containing the estimation of the parameters of \code{dist2}.
+    \item{\code{pars1}  a numeric vector containing the estimation of the parameters of \code{dist1}.}
   
-  \code{pars3}  a numeric vector containing the estimation of the parameters of \code{dist3}.
+    \item{\code{pars2}  a numeric vector containing the estimation of the parameters of \code{dist2}.}
+  
+    \item{\code{pars3}  a numeric vector containing the estimation of the parameters of \code{dist3}.}
+  
+  }
 }
 
-\item{CI }{When \code{ci.method = "param"}, a list of six components:
+\item{.}{\code{CI}, a list of six components when \code{ci.method = "param"}:
 
-  \code{lower1}  the lower limit of the confidence interval for the first threshold.
+  \itemize{
 
-  \code{upper1}  the upper limit of the confidence interval for the first threshold.
+    \item{\code{lower1}  the lower limit of the confidence interval for the first threshold.}
 
-  \code{lower2}  the lower limit of the confidence interval for the second threshold.
+    \item{\code{upper1}  the upper limit of the confidence interval for the first threshold.}
 
-  \code{upper2}  the upper limit of the confidence interval for the second threshold.
+    \item{\code{lower2}  the lower limit of the confidence interval for the second threshold.}
 
-  \code{alpha}  significance level provided by the user.
+    \item{\code{upper2}  the upper limit of the confidence interval for the second threshold.}
+
+    \item{\code{alpha}  significance level provided by the user.}
   
-  \code{ci.method} method used for the confidence intervals calculation.
+    \item{\code{ci.method} method used for the confidence intervals calculation.}
   
-  When \code{ci.method = "boot"}, a list of eleven components:
+  }
   
-  \code{low.norm1}  the lower limit of the bootstrap confidence interval for the first threshold based on the normal distribution.
+  A list of eleven components when \code{ci.method = "boot"}:
   
-  \code{up.norm1}  the upper limit of the bootstrap confidence interval for the first threshold based on the normal distribution.
+  \itemize{
   
-  \code{low.norm2}  the lower limit of the bootstrap confidence interval for the second threshold based on the normal distribution.
+    \item{\code{low.norm1}  the lower limit of the bootstrap confidence interval for the first threshold based on the normal distribution.}
   
-  \code{up.norm2}  the upper limit of the bootstrap confidence interval for the second threshold based on the normal distribution.
+    \item{\code{up.norm1}  the upper limit of the bootstrap confidence interval for the first threshold based on the normal distribution.}
   
-  \code{low.perc1} the lower limit of the bootstrap confidence interval for the first threshold based on percentiles.
+    \item{\code{low.norm2}  the lower limit of the bootstrap confidence interval for the second threshold based on the normal distribution.}
   
-  \code{up.perc1}  the upper limit of the bootstrap confidence interval for the first threshold based on percentiles.
+    \item{\code{up.norm2}  the upper limit of the bootstrap confidence interval for the second threshold based on the normal distribution.}
   
-  \code{low.perc2} the lower limit of the bootstrap confidence interval for the second threshold based on percentiles.
+    \item{\code{low.perc1} the lower limit of the bootstrap confidence interval for the first threshold based on percentiles.}
   
-  \code{up.perc2}  the upper limit of the bootstrap confidence interval for the second threshold based on percentiles.
+    \item{\code{up.perc1}  the upper limit of the bootstrap confidence interval for the first threshold based on percentiles.}
   
-  \code{alpha}  significance level.
+    \item{\code{low.perc2} the lower limit of the bootstrap confidence interval for the second threshold based on percentiles.}
   
-  \code{B}  number of bootstrap resamples.
+    \item{\code{up.perc2}  the upper limit of the bootstrap confidence interval for the second threshold based on percentiles.}
   
-  \code{ci.method}  method used for the confidence intervals calculation.
+    \item{\code{alpha}  significance level.}
   
-  When \code{ci = FALSE}, \code{NULL}.
+    \item{\code{B}  number of bootstrap resamples.}
+  
+    \item{\code{ci.method}  method used for the confidence intervals calculation.}
+  
+  }
+  
+  When \code{ci = FALSE}, \code{CI} is \code{NULL}.
   }
 
 }
@@ -167,13 +182,16 @@ rho <- c(1/3, 1/3, 1/3)
 
 # assuming trinormality
 start <- c(mean(k1), mean(k3))
-thres3(k1, k2, k3, rho, dist1="norm", dist2="norm", dist3="norm", start=start, ci.method="param") 
+thres3(k1, k2, k3, rho, dist1 = "norm", dist2 = "norm", dist3 = "norm",
+       start = start, ci.method = "param") 
 
 # not assuming trinormality
-thres3(k1, k2, k3, rho, B=1000, ci.method="boot", dist1="lnorm", dist2="norm", dist3="norm")
+thres3(k1, k2, k3, rho, B = 1000, ci.method = "boot", dist1 = "lnorm",
+       dist2 = "norm", dist3 = "norm")
 
 # supress confidence intervals calculation
-thres3(k1, k2, k3, rho, ci=FALSE, dist1="lnorm", dist2="norm", dist3="norm")
+thres3(k1, k2, k3, rho, ci = FALSE, dist1 = "lnorm", dist2 = "norm",
+       dist3 = "norm")
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

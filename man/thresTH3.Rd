@@ -8,9 +8,10 @@ This function estimates the theoretical optimum thresholds for the specific dist
 }
 \usage{
 thresTH3(dist1, dist2, dist3, par1.1, par1.2,
-  par2.1, par2.2, par3.1, par3.2, rho,
-  costs = matrix(c(0, 1, 1, rho[1]/rho[2], 0, rho[3]/rho[2], 1, 1, 0),
-  3, 3, byrow = TRUE), q1=0.05, q2=0.5, q3=0.95, tol = 10^(-8))
+         par2.1, par2.2, par3.1, par3.2, rho,
+         costs = matrix(c(0, 1, 1, rho[1]/rho[2], 0, rho[3]/rho[2], 1, 1, 0),
+                        3, 3, byrow = TRUE), q1=0.05, q2=0.5, q3=0.95,
+         tol = 10^(-8))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

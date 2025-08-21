@@ -42,7 +42,7 @@ par2.2 <- 1
 rho <- 0.2
 k1 <- rnorm(n1, par1.1, par1.2) # non-diseased
 k2 <- rnorm(n2, par2.1, par2.2) # diseased
-x <- thres2(k1, k2, rho, method="equal", ci.method="delta")
+x <- thres2(k1, k2, rho, method = "equal", ci.method = "delta")
 secondDer2(x)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

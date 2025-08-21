@@ -9,13 +9,13 @@ This function provides a graph including the sample densities (diseased and non-
 }
 \usage{
 \method{plot}{thres2}(x, bw = c("nrd0", "nrd0"), ci = TRUE,
-  which.boot = c("norm", "perc"), col = c(1, 2, 3),
-  lty = c(1, 1, 1, 2), lwd = c(1, 1, 1),
-  legend = TRUE, leg.pos = "topleft", leg.cex = 1,
-  xlim = NULL, ylim = NULL,
-  main = paste0("Threshold estimate ", ifelse(ci, "and CI ", ""),
-  "(method ", x$T$method, ")"),
-  xlab = "", \dots)
+     which.boot = c("norm", "perc"), col = c(1, 2, 3),
+     lty = c(1, 1, 1, 2), lwd = c(1, 1, 1),
+     legend = TRUE, leg.pos = "topleft", leg.cex = 1,
+     xlim = NULL, ylim = NULL,
+     main = paste0("Threshold estimate ", ifelse(ci, "and CI ", ""),
+                   "(method ", x$T$method, ")"),
+     xlab = "Biomarker", \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -109,8 +109,8 @@ rho <- 0.2
 k1 <- rnorm(n1, par1.1, par1.2) # non-diseased
 k2 <- rnorm(n2, par2.1, par2.2) # diseased
 
-thres <- thres2(k1, k2, rho, method="eq", ci.method="d")
-plot(thres, col=c(1, 2, 4), lwd=c(2, 2, 1), leg.pos="topright")
+thres <- thres2(k1, k2, rho, method = "eq", ci.method = "d")
+plot(thres, col = c(1, 2, 4), lwd = c(2, 2, 1), leg.pos = "topright")
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

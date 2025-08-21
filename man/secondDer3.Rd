@@ -39,8 +39,8 @@ k2 <- rnorm(n, 3, 1)
 k3 <- rnorm(n, 5, 1)
 rho <- c(1/3, 1/3, 1/3)
 start <- c(mean(k1), mean(k3))
-x <- thres3(k1, k2, k3, rho, dist1="norm", dist2="norm",
-            dist3="norm", start=start, ci.method="param") 
+x <- thres3(k1, k2, k3, rho, dist1 = "norm", dist2 = "norm",
+            dist3 = "norm", start = start, ci.method = "param") 
 
 secondDer3(x)
 }

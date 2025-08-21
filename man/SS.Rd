@@ -9,8 +9,8 @@ Estimates the sample size and the optimum sample size ratio needed for a given w
 }
 \usage{
 SS(par1.1, par1.2, par2.1, par2.2=NULL, rho, width,
-   costs=matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow=TRUE),
-   R=NULL, var.equal=FALSE, alpha=0.05)
+   costs = matrix(c(0, 0, 1, (1-rho)/rho), 2, 2, byrow = TRUE),
+   R = NULL, var.equal = FALSE, alpha = 0.05)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -67,7 +67,7 @@ par2.1 <- 2
 par2.2 <- 1
 rho <- 0.3
 width <- 0.5
-SS(par1.1, par1.2, par2.1, par2.2, rho, width, var.equal=TRUE)
+SS(par1.1, par1.2, par2.1, par2.2, rho, width, var.equal = TRUE)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

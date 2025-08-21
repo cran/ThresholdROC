@@ -86,14 +86,14 @@ LR <- function(tab, which, conf.level=0.95){
 
 
 # diag: diagnostic test
-diagnostic <- function(tab, method=c("par", "exact"), casecontrol=FALSE, p=NULL, conf.level=0.95){
+diagnostic <- function(tab, method=c("par", "exact", "auto"), casecontrol=FALSE, p=NULL, conf.level=0.95){
   
   # arguments:
   #  tab: 2x2-dimensional table in the following form:
   #         TP FP
   #         FN TN
   #  method: method for computing the CIs for Se, Sp, PPV, NPV, accuracy and error rate.
-  #          The user can choose between "par" (parametric) and "exact" (exact).
+  #          The user can choose between "par" (parametric), "exact" (exact) and "auto" (automatic choice).
   #          Default, "par".
   #  casecontrol: Were data collected in a case-control study?
   #               Default, FALSE.
@@ -131,6 +131,17 @@ diagnostic <- function(tab, method=c("par", "exact"), casecontrol=FALSE, p=NULL,
   }else if (method=="exact"){
     Se.ic <- c(Se, binom.test(TP, TP + FN, conf.level=conf.level)$conf.int)
     Sp.ic <- c(Sp, binom.test(TN, FP + TN, conf.level=conf.level)$conf.int)
+  }else if (method=="auto"){
+    if ((TP + FN)>=30 & TP>=5 & FN>=5){
+      Se.ic <- c(Se, prop.test(TP, TP + FN, conf.level=conf.level)$conf.int)
+    }else{
+      Se.ic <- c(Se, binom.test(TP, TP + FN, conf.level=conf.level)$conf.int)
+    }
+    if ((FP + TN)>=30 & FP>=5 & TN>=5){
+      Sp.ic <- c(Sp, prop.test(TN, FP + TN, conf.level=conf.level)$conf.int)
+    }else{
+      Sp.ic <- c(Sp, binom.test(TN, FP + TN, conf.level=conf.level)$conf.int)
+    }
   }
   
   # PPV and NPV
@@ -146,6 +157,17 @@ diagnostic <- function(tab, method=c("par", "exact"), casecontrol=FALSE, p=NULL,
     }else if (method=="exact"){
       PPV.ic <- c(PPV, binom.test(TP, TP + FP, conf.level=conf.level)$conf.int)
       NPV.ic <- c(NPV, binom.test(TN, TN + FN, conf.level=conf.level)$conf.int)
+    }else if (method=="auto"){
+      if ((TP + FP)>=30 & TP>=5 & FP>=5){
+        PPV.ic <- c(PPV, prop.test(TP, TP + FP, conf.level=conf.level)$conf.int)
+      }else{
+        PPV.ic <- c(PPV, binom.test(TP, TP + FP, conf.level=conf.level)$conf.int)
+      }
+      if ((FN + TN)>=30 & FN>=5 & TN>=5){
+        NPV.ic <- c(NPV, prop.test(TN, TN + FN, conf.level=conf.level)$conf.int)
+      }else{
+        NPV.ic <- c(NPV, binom.test(TN, TN + FN, conf.level=conf.level)$conf.int)
+      }
     }
   }else{
     if (is.null(p)){
@@ -203,6 +225,12 @@ diagnostic <- function(tab, method=c("par", "exact"), casecontrol=FALSE, p=NULL,
       Acc.ic <- c(Acc, prop.test(TP+TN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
     }else if (method=="exact"){
       Acc.ic <- c(Acc, binom.test(TP+TN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
+    }else if (method=="auto"){
+      if ((TP+FP+FN+TN)>=30 & TP+TN>=5 & FP+FN>=5){
+        Acc.ic <- c(Acc, prop.test(TP+TN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
+      }else{
+        Acc.ic <- c(Acc, binom.test(TP+TN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
+      }
     }
   }else{
     Acc <-  Se*p + Sp*(1-p)
@@ -219,6 +247,12 @@ diagnostic <- function(tab, method=c("par", "exact"), casecontrol=FALSE, p=NULL,
       ER.ic <- c(ER, prop.test(FP+FN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
     }else if (method=="exact"){
       ER.ic <- c(ER, binom.test(FP+FN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
+    }else if (method=="auto"){
+      if ((TP+FP+FN+TN)>=30 & TP+TN>=5 & FP+FN>=5){
+        ER.ic <- c(ER, prop.test(FP+FN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
+      }else{
+        ER.ic <- c(ER, binom.test(FP+FN, TP+FP+FN+TN, conf.level=conf.level)$conf.int)
+      }
     }
   }else{
     ER <- (1-Se)*p + (1-Sp)*(1-p)

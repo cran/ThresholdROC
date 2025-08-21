@@ -9,11 +9,12 @@ This function calculates the threshold estimate and its corresponding confidence
 }
 \usage{
 thres2(k1, k2, rho,
-  costs = matrix(c(0, 0, 1, (1 - rho)/rho), 2, 2, byrow = TRUE),
-  R=NULL,
-  method = c("equal", "unequal", "empirical", "smooth", "parametric"),
-  dist1 = NULL, dist2 = NULL, ci = TRUE, ci.method = c("delta", "boot"),
-  B = 1000, alpha = 0.05, extra.info = FALSE, na.rm = FALSE, q1=0.05, q2=0.95)
+       costs = matrix(c(0, 0, 1, (1 - rho)/rho), 2, 2, byrow = TRUE),
+       R = NULL,
+       method = c("equal", "unequal", "empirical", "smooth", "parametric"),
+       dist1 = NULL, dist2 = NULL, ci = TRUE, ci.method = c("delta", "boot"),
+       B = 1000, alpha = 0.05, extra.info = FALSE, na.rm = FALSE,
+       q1 = 0.05, q2 = 0.95)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -77,80 +78,97 @@ For parameter \code{ci.method} the user can choose between \code{"delta"} (delta
 }
 \value{
 An object of class \code{thres2}, which is a list with two components:
-\item{T}{a list of at least seven components:
-
-  \code{thres}  threshold estimate.
+\item{.}{\code{T}, which is a list of at least seven components:
+  \itemize{
+    \item{\code{thres}  threshold estimate.}
   
-  \code{prev}  disease prevalence provided by the user.
+    \item{\code{prev}  disease prevalence provided by the user.}
   
-  \code{costs}  cost matrix provided by the user.
+    \item{\code{costs}  cost matrix provided by the user.}
   
-  \code{R}  R term, the product of the non-disease odds and the cost ratio (for further details about this concept, see \bold{References}).
+    \item{\code{R}  R term, the product of the non-disease odds and the cost ratio (for further details about this concept, see \bold{References}).}
   
-  \code{method}  method used in the estimation.
+    \item{\code{method}  method used in the estimation.}
   
-  \code{k1}  vector containing the healthy sample values provided by the user.
+    \item{\code{k1}  vector containing the healthy sample values provided by the user.}
   
-  \code{k2}  vector containing the diseased sample values provided by the user.
+    \item{\code{k2}  vector containing the diseased sample values provided by the user.}
+  
+  }
   
   When \code{method = "empirical"}, \code{T} also contains:
   
-  \code{sens}  sensitivity obtained.
+  \itemize{
   
-  \code{spec}  specificity obtained.
+    \item{\code{sens}  sensitivity obtained.}
   
-  \code{cost}  the minimum cost associated with \code{T$thres}.
+    \item{\code{spec}  specificity obtained.}
   
-  \code{tot.thres} vector of possible thresholds. Only if \code{extra.info = TRUE}.
+    \item{\code{cost}  the minimum cost associated with \code{T$thres}.}
   
-  \code{tot.cost} vector of empirical costs. Only if \code{extra.info = TRUE}.
+    \item{\code{tot.thres} vector of possible thresholds. Only if \code{extra.info = TRUE}.}
   
-  \code{tot.spec.c}  complementary of the vector of empirical specificities (1-spec). Only if \code{extra.info = T}.
+    \item{\code{tot.cost} vector of empirical costs. Only if \code{extra.info = TRUE}.}
   
-  \code{tot.sens}  vector of empirical sensitivities. Only if \code{extra.info = TRUE}.
+    \item{\code{tot.spec.c}  complementary of the vector of empirical specificities (1-spec). Only if \code{extra.info = T}.}
+  
+    \item{\code{tot.sens}  vector of empirical sensitivities. Only if \code{extra.info = TRUE}.}
+  
+  }
   
   When \code{method = "parametric"}, \code{T} also contains:
   
-  \code{dist1}  distribution assumed for the healthy population.
+  \itemize{
   
-  \code{dist2}  distribution assumed for the diseased population.
+    \item{\code{dist1}  distribution assumed for the healthy population.}
   
-  \code{pars1}  a numeric vector containing the estimation of the parameters of \code{dist1}.
+    \item{\code{dist2}  distribution assumed for the diseased population.}
   
-  \code{pars2}  a numeric vector containing the estimation of the parameters of \code{dist2}.
-
+    \item{\code{pars1}  a numeric vector containing the estimation of the parameters of \code{dist1}.}
+  
+    \item{\code{pars2}  a numeric vector containing the estimation of the parameters of \code{dist2}.}
+  
   }
-\item{CI }{When \code{ci.method = "delta"}, a list of five components:
+  }
+\item{.}{\code{CI}, a list of five components when \code{ci.method = "delta"}:
 
-  \code{lower}  the lower limit of the confidence interval.
+  \itemize{
 
-  \code{upper}  the upper limit of the confidence interval.
-  
-  \code{se}  the standard error used in the calculation of the confidence interval. 
-  
-  \code{alpha}  significance level provided by the user.
-  
-  \code{ci.method} method used for the confidence intervals calculation.
-  
-  When \code{ci.method = "boot"}, a list of eight components:
-  
-  \code{low.norm}  the lower limit of the bootstrap confidence interval based on the normal distribution.
-  
-  \code{up.norm}  the upper limit of the bootstrap confidence interval based on the normal distribution.
-  
-  \code{se}  the bootstrap standard error used in the calculation of the confidence interval based on the normal distribution. 
+    \item{\code{lower}  the lower limit of the confidence interval.}
 
-  \code{low.perc} the lower limit of the bootstrap confidence interval based on percentiles.
+    \item{\code{upper}  the upper limit of the confidence interval.}
   
-  \code{up.perc}  the upper limit of the bootstrap confidence interval based on percentiles.
+    \item{\code{se}  the standard error used in the calculation of the confidence interval.}
   
-  \code{alpha}  significance level provided by the user.
+    \item{\code{alpha}  significance level provided by the user.}
   
-  \code{B}  number of bootstrap resamples used.
+    \item{\code{ci.method} method used for the confidence intervals calculation.}
   
-  \code{ci.method}  method used for the confidence intervals calculation.
+  }
   
-  When \code{ci = FALSE}, \code{NULL}.
+  A list of eight components when \code{ci.method = "boot"}:
+  
+  \itemize{
+  
+    \item{\code{low.norm}  the lower limit of the bootstrap confidence interval based on the normal distribution.}
+  
+    \item{\code{up.norm}  the upper limit of the bootstrap confidence interval based on the normal distribution.}
+  
+    \item{\code{se}  the bootstrap standard error used in the calculation of the confidence interval based on the normal distribution.}
+
+    \item{\code{low.perc} the lower limit of the bootstrap confidence interval based on percentiles.}
+  
+    \item{\code{up.perc}  the upper limit of the bootstrap confidence interval based on percentiles.}
+  
+    \item{\code{alpha}  significance level provided by the user.}
+  
+    \item{\code{B}  number of bootstrap resamples used.}
+  
+    \item{\code{ci.method}  method used for the confidence intervals calculation.}
+    
+    }
+  
+  When \code{ci = FALSE}, \code{CI} is \code{NULL}.
   }
 }
 \references{
@@ -180,19 +198,20 @@ rho <- 0.2
 k1 <- rnorm(n1, par1.1, par1.2) # non-diseased
 k2 <- rnorm(n2, par2.1, par2.2) # diseased
 
-thres2(k1, k2, rho, method="eq", ci.method="d")
-thres2(k1, k2, rho, method="uneq", ci.method="d")
+thres2(k1, k2, rho, method = "eq", ci.method = "d")
+thres2(k1, k2, rho, method = "uneq", ci.method = "d")
 # specify R instead of (default) costs
-thres2(k1, k2, rho, costs=NULL, R=2, method="uneq", ci.method="d")
+thres2(k1, k2, rho, costs = NULL, R = 2, method = "uneq", ci.method = "d")
 \dontrun{
-thres2(k1, k2, rho, method="empirical", ci.method="b")
+thres2(k1, k2, rho, method = "empirical", ci.method = "b")
 
 # example 2
 set.seed(1234)
 k1 <- rnorm(50, 10, 3)
 k2 <- rlnorm(55)
 rho <- 0.3
-thres2(k1, k2, rho, method="param", ci.method="boot", dist1="norm", dist2="lnorm")
+thres2(k1, k2, rho, method = "param", ci.method = "boot",
+       dist1 = "norm", dist2 = "lnorm")
 }
 
 # supress confidence intervals calculation

@@ -1615,7 +1615,7 @@ plotCostROC <- function(x, type="l", which.plot=c("both", "cost", "roc"), ...){
 ######  xlim, ylim: 2-dimensional vectors indicating the limits for the plot
 ######  main, xlab...: further arguments to be passed to 'plot()'.
 ##################################################################################
-plot.thres2 <- function(x, bw=c("nrd0", "nrd0"), ci=TRUE, which.boot=c("norm", "perc"), col=c(1, 2, 3), lty=c(1, 1, 1, 2), lwd=c(1, 1, 1), legend=TRUE, leg.pos="topleft", leg.cex=1, xlim=NULL, ylim=NULL, main=paste0("Threshold estimate ", ifelse(ci, "and CI ", ""), "(method ", x$T$method, ")"), xlab="", ...){
+plot.thres2 <- function(x, bw=c("nrd0", "nrd0"), ci=TRUE, which.boot=c("norm", "perc"), col=c(1, 2, 3), lty=c(1, 1, 1, 2), lwd=c(1, 1, 1), legend=TRUE, leg.pos="topleft", leg.cex=1, xlim=NULL, ylim=NULL, main=paste0("Threshold estimate ", ifelse(ci, "and CI ", ""), "(method ", x$T$method, ")"), xlab="Biomarker", ...){
   # error handling
   if (!is.logical(ci) | is.na(ci)){
     stop("'ci' must be TRUE or FALSE")
